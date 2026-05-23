@@ -1,52 +1,32 @@
-# Decorators
+# Декораторы
 
-**Decorators** are classes that can encapsulate certain visual effects and then apply those visual
-effects to a sequence of canvas drawing operations. Decorators are not [Component]s, but they can
-be applied to components either manually or via the [HasDecorator] mixin. Likewise, decorators are
-not [Effect]s, although they can be used to implement certain `Effect`s.
+**Декораторы** — это классы, которые могут инкапсулировать определённые визуальные эффекты и применять их к последовательности операций рисования на холсте. Декораторы не являются [компонентами][Component], но могут применяться к компонентам вручную или через примесь [HasDecorator]. Аналогично, декораторы не являются [эффектами][Effect], хотя могут использоваться для реализации некоторых `Effect`.
 
-There are a certain number of decorators available in Flame, and it is simple to add one's own if
-necessary. We are planning to add shader-based decorators once Flutter fully supports them on the
-web.
+Во Flame доступно некоторое количество встроенных декораторов, и при необходимости несложно добавить собственные. Мы планируем добавить декораторы на основе шейдеров, когда Flutter полностью поддержит их в вебе.
 
 
-## Performance considerations
+## Вопросы производительности
 
-Applying a Decorator to a component can have a significant performance overhead, especially when
-it involves `canvas.saveLayer()`.
+Применение декоратора к компоненту может вызывать значительные накладные расходы, особенно когда используется `canvas.saveLayer()`.
 
-- **Decorators**: Use `canvas.saveLayer()` by default to isolate rendering and apply
-  filters. This requires off-screen buffer allocation and GPU context switches. This is
-  computationally expensive but essential for correct visual composition of complex
-  objects (see below).
-- **Effects** (e.g., `OpacityEffect`, `ColorEffect`): Modify the component's properties
-  or `Paint` directly. These are extremely fast and hardware-accelerated, but they apply
-  to each child individually.
+- **Декораторы**: По умолчанию используют `canvas.saveLayer()`, чтобы изолировать рендеринг и применить фильтры. Это требует выделения внеэкранного буфера и переключения контекста GPU. Это вычислительно затратно, но необходимо для корректной визуальной композиции сложных объектов (см. ниже).
+- **Эффекты** (например, `OpacityEffect`, `ColorEffect`): Непосредственно изменяют свойства компонента или его `Paint`. Они чрезвычайно быстры и аппаратно ускорены, но применяются к каждому дочернему элементу по отдельности.
 
 
-### Decorators vs Effects: Visual Composition
+### Декораторы против эффектов: визуальная композиция
 
-The key difference lies in how they handle composite objects (components with multiple
-overlapping children):
+Ключевое различие заключается в обработке составных объектов (компонентов с несколькими перекрывающимися дочерними элементами):
 
-1. **Effects (Individual Blend)**: If you apply an `OpacityEffect` to a parent component,
-   Flame will render each child with that opacity. If children overlap, you will see
-   through them to the background and to other children, creating a "double-exposure"
-   look.
-2. **Decorators (Group Blend)**: Because decorators use `saveLayer`, they render the
-   entire subtree into a flat buffer first, and then apply the effect to that
-   buffer. This results in a uniform appearance where overlaps are not visible,
-   making the group look like a single solid object.
+1. **Эффекты (индивидуальное смешивание)**: Если применить `OpacityEffect` к родительскому компоненту, Flame отобразит каждого потомка с этой непрозрачностью. Если дочерние элементы перекрываются, вы будете видеть сквозь них фон и другие дочерние элементы, создавая эффект «двойной экспозиции».
+2. **Декораторы (групповое смешивание)**: Поскольку декораторы используют `saveLayer`, они сначала рендерят всё поддерево в плоский буфер, а затем применяют эффект к этому буферу. В результате получается однородный вид, при котором перекрытия не видны, и группа выглядит как единый сплошной объект.
 
-**Recommendation**:
+**Рекомендация**:
 
-- Use **Effects** for simple property animations and high-performance color shifts on
-  large numbers of units.
-- Use **Decorators** for advanced post-processing (blurs, tints) and when you need
-  to treat a group of components as a single visual unit.
+- Используйте **эффекты** для простых анимаций свойств и высокопроизводительных изменений цвета на большом количестве юнитов.
+- Используйте **декораторы** для продвинутой постобработки (размытие, тонирование) и когда требуется рассматривать группу компонентов как единое визуальное целое.
 
 
-## Flame built-in decorators
+## Встроенные декораторы Flame
 
 
 ### PaintDecorator.blur
@@ -59,20 +39,19 @@ overlapping children):
 :height: 160
 ```
 
-This decorator applies a Gaussian blur to the underlying component. The amount of blur can be
-different in the X and Y direction, though this is not very common.
+Этот декоратор применяет размытие по Гауссу к нижележащему компоненту. Степень размытия может быть разной по направлениям X и Y, хотя это используется редко.
 
 ```dart
 final decorator = PaintDecorator.blur(3.0);
 ```
 
-Possible uses:
+Возможные применения:
 
-- soft shadows;
-- "out-of-focus" objects in the distance or very close to the camera;
-- motion blur effects;
-- deemphasize/obscure content when showing a popup dialog;
-- blurred vision when the character is drunk.
+- мягкие тени;
+- объекты «вне фокуса» на расстоянии или очень близко к камере;
+- эффекты размытия в движении (motion blur);
+- приглушение/скрытие содержимого при показе всплывающего диалога;
+- затуманенное зрение, когда персонаж пьян.
 
 
 ### PaintDecorator.grayscale
@@ -85,19 +64,17 @@ Possible uses:
 :height: 160
 ```
 
-This decorator converts the underlying image into the shades of grey, as if it was a
-black-and-white photograph. In addition, you can make the image semi-transparent to the desired
-level of `opacity`.
+Этот декоратор преобразует нижележащее изображение в оттенки серого, как если бы это была чёрно-белая фотография. Кроме того, можно сделать изображение полупрозрачным до желаемого уровня `opacity`.
 
 ```dart
 final decorator = PaintDecorator.grayscale(opacity: 0.5);
 ```
 
-Possible uses:
+Возможные применения:
 
-- apply to an NPC to turn them into stone, or into a ghost!
-- apply to a scene to indicate that it is a memory of the past;
-- black-and-white photos.
+- применить к NPC, чтобы превратить его в камень или в призрака!
+- применить к сцене, чтобы показать, что это воспоминание о прошлом;
+- чёрно-белые фотографии.
 
 
 ### PaintDecorator.tint
@@ -110,21 +87,19 @@ Possible uses:
 :height: 160
 ```
 
-This decorator *tints* the underlying image with the specified color, as if watching it through a
-colored glass. It is recommended that the `color` used by this decorator was semi-transparent, so
-that you can see the details of the image below.
+Этот декоратор *тонирует* нижележащее изображение указанным цветом, как если бы вы смотрели на него через цветное стекло. Рекомендуется, чтобы используемый `color` был полупрозрачным, чтобы можно было видеть детали изображения снизу.
 
 ```dart
 final decorator = PaintDecorator.tint(const Color(0xAAFF0000);
 ```
 
-Possible uses:
+Возможные применения:
 
-- NPCs affected by certain types of magic;
-- items/characters in the shadows can be tinted black;
-- tint the scene red to show bloodlust, or that the character is low on health;
-- tint green to show that the character is poisoned or sick;
-- tint the scene deep blue during the night time;
+- NPC, находящиеся под воздействием определённых типов магии;
+- предметы/персонажи в тени можно тонировать чёрным;
+- тонировать сцену красным, чтобы показать жажду крови или низкий уровень здоровья персонажа;
+- тонировать зелёным, показывая, что персонаж отравлен или болен;
+- тонировать сцену тёмно-синим в ночное время.
 
 
 ### Rotate3DDecorator
@@ -137,12 +112,9 @@ Possible uses:
 :height: 160
 ```
 
-This decorator applies a 3D rotation to the underlying component. You can specify the angles of the
-rotation, as well as the pivot point and the amount of perspective distortion to apply.
+Этот декоратор применяет трёхмерное вращение к нижележащему компоненту. Можно задать углы поворота, а также точку опоры и величину перспективного искажения.
 
-The decorator also supplies the `isFlipped` property, which allows you to determine whether the
-component is currently being viewed from the front side or from the back. This is useful if you want
-to draw a component whose appearance is different in the front and in the back.
+Декоратор также предоставляет свойство `isFlipped`, позволяющее определить, виден ли компонент в данный момент с лицевой стороны или с обратной. Это полезно, если требуется отрисовать компонент, внешний вид которого различается спереди и сзади.
 
 ```dart
 final decorator = Rotate3DDecorator(
@@ -152,12 +124,12 @@ final decorator = Rotate3DDecorator(
 );
 ```
 
-Possible uses:
+Возможные применения:
 
-- a card that can be flipped over;
-- pages in a book;
-- transitions between app routes;
-- 3d falling particles such as snowflakes or leaves.
+- карточка, которую можно перевернуть;
+- страницы книги;
+- переходы между маршрутами приложения;
+- трёхмерные падающие частицы, такие как снежинки или листья.
 
 
 ### Shadow3DDecorator
@@ -170,12 +142,9 @@ Possible uses:
 :height: 160
 ```
 
-This decorator renders a shadow underneath the component, as if the component was a 3D object
-standing on a plane. This effect works best for games that use isometric camera projection.
+Этот декоратор отрисовывает тень под компонентом, как если бы компонент был трёхмерным объектом, стоящим на плоскости. Этот эффект лучше всего подходит для игр, использующих изометрическую проекцию камеры.
 
-The shadow produced by this generator is quite flexible: you can control its angle, length, opacity,
-blur, etc. For a full description of what properties this decorator has and their meaning, see the
-class documentation.
+Создаваемая тень очень гибкая: можно управлять её углом, длиной, непрозрачностью, размытием и т.д. Полное описание свойств декоратора и их значения смотрите в документации класса.
 
 ```dart
 final decorator = Shadow3DDecorator(
@@ -188,9 +157,7 @@ final decorator = Shadow3DDecorator(
 );
 ```
 
-The primary purpose of this decorator is to add shadows on the ground to your components. The main
-limitation is that the shadows are flat and cannot interact with the environment. For example, this
-decorator cannot handle shadows that fall onto walls or other vertical structures.
+Основное назначение этого декоратора — добавление теней на земле к вашим компонентам. Главное ограничение состоит в том, что тени являются плоскими и не могут взаимодействовать с окружением. Например, этот декоратор не может обрабатывать тени, падающие на стены или другие вертикальные структуры.
 
 
 ### HueDecorator
@@ -203,55 +170,41 @@ decorator cannot handle shadows that fall onto walls or other vertical structure
 :height: 160
 ```
 
-This decorator shifts the hue of the underlying component by the specified angle in radians.
+Этот декоратор сдвигает оттенок нижележащего компонента на указанный угол в радианах.
 
 ```dart
 final decorator = HueDecorator(hue: tau / 4);
 ```
 
-Possible uses:
+Возможные применения:
 
-- alternative color schemes for enemies ("palette swapping");
-- environmental changes (e.g., world turning purple/surreal);
-- power-up indicators.
-
-
-## Using decorators
+- альтернативные цветовые схемы для врагов («замена палитры»);
+- изменения окружения (например, мир становится фиолетовым/сюрреалистичным);
+- индикаторы получения усилений.
 
 
-### HasDecorator mixin
+## Использование декораторов
 
-This `Component` mixin adds the `decorator` property, which is initially `null`. If you set this
-property to an actual `Decorator` object, then that decorator will apply its visual effect during
-the rendering of the component. In order to remove this visual effect, simply set the `decorator`
-property back to `null`.
+
+### Примесь HasDecorator
+
+Эта примесь `Component` добавляет свойство `decorator`, которое изначально равно `null`. Если присвоить этому свойству реальный объект `Decorator`, то этот декоратор применит свой визуальный эффект во время рендеринга компонента. Чтобы убрать этот визуальный эффект, просто установите свойство `decorator` обратно в `null`.
 
 
 ### PositionComponent
 
-`PositionComponent` (and all the derived classes) already has a `decorator` property, so for these
-components the `HasDecorator` mixin is not needed.
+`PositionComponent` (и все производные классы) уже имеют свойство `decorator`, поэтому для этих компонентов примесь `HasDecorator` не нужна.
 
-In fact, the `PositionComponent` uses its decorator in order to properly position the component on
-the screen. Thus, any new decorators that you'd want to apply to the `PositionComponent` will need
-to be chained (see the [Multiple decorators](#multiple-decorators) section below).
+Фактически, `PositionComponent` использует свой декоратор для корректного позиционирования компонента на экране. Таким образом, любые новые декораторы, которые вы захотите применить к `PositionComponent`, должны быть объединены в цепочку (см. раздел [Несколько декораторов](#multiple-decorators)).
 
-It is also possible to replace the root decorator of the `PositionComponent`, if you want to create
-an alternative logic for how the component shall be positioned on the screen.
+Также можно заменить корневой декоратор `PositionComponent`, если требуется создать альтернативную логику позиционирования компонента на экране.
 
 
-### Multiple decorators
+### Несколько декораторов
 
-It is possible to apply several decorators simultaneously to the same component: the `Decorator`
-class supports chaining. That is, if you have an existing decorator on a component and you want to
-add another one, then you can call `component.decorator.addLast(newDecorator)`. This will add
-the new decorator at the end of the existing chain. The method `removeLast()` can remove that
-decorator later.
+К одному компоненту можно одновременно применить несколько декораторов: класс `Decorator` поддерживает цепочки. То есть, если у компонента уже есть декоратор, и вы хотите добавить ещё один, можно вызвать `component.decorator.addLast(newDecorator)`. Это добавит новый декоратор в конец существующей цепочки. Метод `removeLast()` позже может удалить этот декоратор.
 
-Several decorators can be chain that way. For example, if `A` is an initial decorator, then
-`A.addLast(B)` can be followed by either `A.addLast(C)` or `B.addLast(C)`, and in both cases the
-chain `A -> B -> C` will be created. In practice, it means that the entire chain can be manipulated
-from its root, which usually is `component.decorator`.
+Таким образом можно объединить несколько декораторов в цепочку. Например, если `A` — начальный декоратор, то `A.addLast(B)` можно дополнить либо `A.addLast(C)`, либо `B.addLast(C)`, и в обоих случаях будет создана цепочка `A -> B -> C`. На практике это означает, что всей цепочкой можно управлять через её корень, которым обычно является `component.decorator`.
 
 
 [Component]: ../components/components.md#component
