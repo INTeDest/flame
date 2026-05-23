@@ -1,16 +1,10 @@
 # ParallaxComponent
 
-Parallax scrolling is a classic game development technique where background layers move at different
-speeds to create an illusion of depth. Objects closer to the camera appear to move faster than those
-far away. Just as when looking out a car window, nearby trees fly by while distant mountains barely
-move. This effect makes 2D game worlds feel more immersive and is commonly used in side-scrollers,
-platformers, and menu screens.
+Параллаксная прокрутка — классический приём в разработке игр, когда фоновые слои движутся с разной скоростью, создавая иллюзию глубины. Объекты, расположенные ближе к камере, перемещаются быстрее, чем удалённые. Так же, как при взгляде из окна автомобиля: близкие деревья проносятся мимо, а далёкие горы едва движутся. Этот эффект делает двухмерные игровые миры более захватывающими и часто применяется в сайд-скроллерах, платформерах и экранах меню.
 
-This `Component` can be used to render backgrounds with a depth feeling by drawing several
-transparent images on top of each other, where each image or animation (`ParallaxRenderer`) is
-moving with a different velocity.
+Этот `Component` позволяет отрисовывать фон с ощущением глубины, накладывая друг на друга несколько прозрачных изображений, каждое из которых (или анимация — `ParallaxRenderer`) движется с собственной скоростью.
 
-The simplest `ParallaxComponent` is created like this:
+Простейший `ParallaxComponent` создаётся так:
 
 ```dart
 @override
@@ -23,7 +17,7 @@ Future<void> onLoad() async {
 }
 ```
 
-A ParallaxComponent can also "load itself" by implementing the `onLoad` method:
+ParallaxComponent также может «загружать себя сам», реализуя метод `onLoad`:
 
 ```dart
 class MyParallaxComponent extends ParallaxComponent<MyGame> {
@@ -44,13 +38,9 @@ class MyGame extends FlameGame {
 }
 ```
 
-This creates a static background. If you want a moving parallax (which is the whole point of a
-parallax), you can do it in a few different ways depending on how fine-grained you want to set the
-settings for each layer.
+Так создаётся статичный фон. Если нужен движущийся параллакс (в чём, собственно, и заключается его смысл), это можно сделать несколькими способами в зависимости от желаемой детализации настроек каждого слоя.
 
-The simplest way is to set the named optional parameters `baseVelocity` and
-`velocityMultiplierDelta` in the `load` helper function. For example if you want to move your
-background images along the X-axis with a faster speed the "closer" the image is:
+Самый простой путь — задать именованные опциональные параметры `baseVelocity` и `velocityMultiplierDelta` во вспомогательной функции `load`. Например, чтобы фоновые изображения двигались по оси X тем быстрее, чем они «ближе»:
 
 ```dart
 @override
@@ -63,8 +53,7 @@ Future<void> onLoad() async {
 }
 ```
 
-You can set the baseSpeed and layerDelta at any time, for example if your character jumps or your
-game speeds up.
+Вы можете изменить `baseSpeed` и `layerDelta` в любой момент, например, когда персонаж прыгает или игра ускоряется.
 
 ```dart
 @override
@@ -75,13 +64,9 @@ void onLoad() {
 }
 ```
 
-By default, the images are aligned to the bottom left, repeated along the X-axis and scaled
-proportionally so that the image covers the height of the screen. If you want to change this
-behavior, for example if you are not making a side-scrolling game, you can set the `repeat`,
-`alignment` and `fill` parameters for each `ParallaxRenderer` and add them to `ParallaxLayer`s that
-you then pass in to the `ParallaxComponent`'s constructor.
+По умолчанию изображения выравниваются по нижнему левому краю, повторяются по оси X и пропорционально масштабируются так, чтобы покрыть высоту экрана. Если требуется изменить это поведение — например, для игры не в жанре сайд-скроллера, — можно задать параметры `repeat`, `alignment` и `fill` для каждого `ParallaxRenderer` и добавить их в `ParallaxLayer`, которые затем передаются в конструктор `ParallaxComponent`.
 
-Advanced example:
+Продвинутый пример:
 
 ```dart
 final images = [
@@ -120,29 +105,18 @@ final parallaxComponent = ParallaxComponent.fromParallax(
 );
 ```
 
-- The stars image in this example will be repeatedly drawn in both axes, align in the center and be
- scaled to fill the screen width.
-- The planets image will be repeated in Y-axis, aligned to the bottom left of the screen and not be
- scaled.
-- The dust image will be repeated in X-axis, aligned to the top right and scaled to fill the screen
- height.
+- Изображение звёзд в этом примере будет повторяться по обеим осям, выравниваться по центру и масштабироваться, заполняя ширину экрана.
+- Изображение планет будет повторяться по оси Y, выравниваться по нижнему левому краю и не масштабироваться.
+- Изображение пыли будет повторяться по оси X, выравниваться по верхнему правому краю и масштабироваться по высоте экрана.
 
-Once you are done setting up your `ParallaxComponent`, add it to the game like with any other
-component (`game.add(parallaxComponent`).
-Also, don't forget to add your images to the `pubspec.yaml` file as assets or they won't be found.
+Завершив настройку `ParallaxComponent`, добавьте его в игру, как и любой другой компонент (`game.add(parallaxComponent`).
+Не забудьте прописать изображения в файле `pubspec.yaml` как assets, иначе они не будут найдены.
 
-The `Parallax` file contains an extension of the game which adds `loadParallax`,
-`loadParallaxLayer`, `loadParallaxImage` and `loadParallaxAnimation` so that it automatically
-uses your game's image cache instead of the global one. The same goes for the `ParallaxComponent`
-file, but that provides `loadParallaxComponent`.
+Файл `Parallax` содержит расширение игры, добавляющее методы `loadParallax`, `loadParallaxLayer`, `loadParallaxImage` и `loadParallaxAnimation`, которые автоматически используют кеш изображений вашей игры вместо глобального. То же относится и к файлу `ParallaxComponent`, но он предоставляет `loadParallaxComponent`.
 
-If you want a fullscreen `ParallaxComponent` simply omit the `size` argument and it will take the
-size of the game, it will also resize to fullscreen when the game changes size or orientation.
+Если нужен полноэкранный `ParallaxComponent`, просто опустите аргумент `size`, и он примет размер игры, а также будет подстраиваться при изменении размера или ориентации экрана.
 
-Flame provides two kinds of `ParallaxRenderer`: `ParallaxImage` and `ParallaxAnimation`,
-`ParallaxImage` is a static image renderer and `ParallaxAnimation` is, as its name implies, an
-animation and frame based renderer.
-It is also possible to create custom renderers by extending the `ParallaxRenderer` class.
+Flame предоставляет два вида `ParallaxRenderer`: `ParallaxImage` и `ParallaxAnimation`. `ParallaxImage` — это статичный рендерер изображений, а `ParallaxAnimation`, как следует из названия, — рендерер на основе анимации и кадров.
+Также можно создавать собственные рендереры, расширив класс `ParallaxRenderer`.
 
-Three example implementations can be found in the
-[examples directory](https://github.com/flame-engine/flame/tree/main/examples/lib/stories/parallax).
+Три примера реализации можно найти в [каталоге примеров](https://github.com/flame-engine/flame/tree/main/examples/lib/stories/parallax).
