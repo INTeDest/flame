@@ -1,65 +1,53 @@
-# Util
+# Утилиты
 
-On this page you can find documentation for some utility classes and methods.
+На этой странице представлена документация по некоторым служебным классам и методам.
 
 
-## Device Class
+## Класс Device
 
 ```{warning}
-Many methods in this class only work on mobile platforms (Android and iOS).
+Многие методы этого класса работают только на мобильных платформах (Android и iOS).
 
-Using these methods on other platforms will not have any effect and you will
-get a warning printed on your console when running in debug mode.
+Использование этих методов на других платформах не даст никакого эффекта, и при запуске в режиме отладки в консоль будет выведено предупреждение.
 ```
 
-This class can be accessed from `Flame.device` and it has some methods that can be used to control
-the state of the device, for instance you can change the screen orientation and set whether the
-application should be fullscreen or not.
+Доступ к этому классу осуществляется через `Flame.device`. Он содержит ряд методов для управления состоянием устройства, например, можно изменить ориентацию экрана и установить, должно ли приложение быть полноэкранным.
 
 
 ### `Flame.device.fullScreen()`
 
-When called, this disables all `SystemUiOverlay` making the app full screen.
-When called in the main method, it makes your app full screen (no top nor bottom bars).
+При вызове отключает все `SystemUiOverlay`, делая приложение полноэкранным.
+При вызове в главном методе ваше приложение становится полноэкранным (без верхней и нижней панелей).
 
-**Note:** It has no effect when called on the web.
+**Примечание:** Не действует при вызове в вебе.
 
 
 ### `Flame.device.setLandscape()`
 
-This method sets the orientation of the whole application (effectively, also the game) to landscape
-and depending on operating system and device setting, should allow both left and right landscape
-orientations. To set the app orientation to landscape on a specific direction, use either
-`Flame.device.setLandscapeLeftOnly` or `Flame.device.setLandscapeRightOnly`.
+Устанавливает ориентацию всего приложения (а значит, и игры) в альбомную; в зависимости от операционной системы и настроек устройства должны поддерживаться обе альбомные ориентации (левая и правая). Чтобы задать приложению строго определённую альбомную ориентацию, используйте `Flame.device.setLandscapeLeftOnly` или `Flame.device.setLandscapeRightOnly`.
 
-**Note:** It has no effect when called on the web.
+**Примечание:** Не действует при вызове в вебе.
 
 
 ### `Flame.device.setPortrait()`
 
-This method sets the orientation of the whole application (effectively, also the game) to portrait
-and depending on operating system and device setting, it should allow for both up and down portrait
-orientations. To set the app orientation to portrait for a specific direction, use either
-`Flame.device.setPortraitUpOnly` or `Flame.device.setPortraitDownOnly`.
+Устанавливает ориентацию всего приложения (а значит, и игры) в портретную; в зависимости от операционной системы и настроек устройства должны поддерживаться обе портретные ориентации (вверх и вниз). Чтобы задать приложению строго определённую портретную ориентацию, используйте `Flame.device.setPortraitUpOnly` или `Flame.device.setPortraitDownOnly`.
 
-**Note:** It has no effect when called on the web.
+**Примечание:** Не действует при вызове в вебе.
 
 
-### `Flame.device.setOrientation()` and `Flame.device.setOrientations()`
+### `Flame.device.setOrientation()` и `Flame.device.setOrientations()`
 
-If a finer control of the allowed orientations is required (without having to deal with
-`SystemChrome` directly), `setOrientation` (accepts a single `DeviceOrientation` as a parameter) and
-`setOrientations` (accepts a `List<DeviceOrientation>` for possible orientations) can be used.
+Если требуется более точный контроль разрешённых ориентаций (без прямого обращения к `SystemChrome`), можно использовать `setOrientation` (принимает один параметр `DeviceOrientation`) и `setOrientations` (принимает `List<DeviceOrientation>` для возможных ориентаций).
 
-**Note:** It has no effect when called on the web.
+**Примечание:** Не действуют при вызове в вебе.
 
 
-## Timer
+## Таймер
 
-Flame provides a simple utility class to help you handle countdowns and timer state changes like
-events.
+Flame предоставляет простой служебный класс, помогающий обрабатывать обратный отсчёт и изменения состояния таймера, подобно событиям.
 
-Countdown example:
+Пример обратного отсчёта:
 
 ```dart
 import 'package:flame/components.dart';
@@ -77,7 +65,7 @@ class MyGame extends Game {
   void update(double dt) {
     countdown.update(dt);
     if (countdown.finished) {
-      // Prefer the timer callback, but this is better in some cases
+      // Лучше использовать колбэк таймера, но в некоторых случаях подходит и так
     }
   }
 
@@ -90,10 +78,9 @@ class MyGame extends Game {
     );
   }
 }
-
 ```
 
-Interval example:
+Пример интервала:
 
 ```dart
 import 'package:flame/components.dart';
@@ -126,12 +113,11 @@ class MyGame extends Game {
     textPaint.render(canvas, "Elapsed time: $elapsedSecs", Vector2(10, 150));
   }
 }
-
 ```
 
-`Timer` instances can also be used inside a `FlameGame` game by using the `TimerComponent` class.
+Экземпляры `Timer` также можно использовать внутри игры `FlameGame` с помощью класса `TimerComponent`.
 
-`TimerComponent` example:
+Пример `TimerComponent`:
 
 ```dart
 import 'package:flame/timer.dart';
@@ -152,31 +138,20 @@ class MyFlameGame extends FlameGame {
 ```
 
 ```{note}
-A `Timer` or `TimerComponent` can repeat indefinitely by providing the
-`repeat: true` argument or it can be repeated a certain number of
-times by using the `tickCount` argument together with `repeat: true`.
+`Timer` или `TimerComponent` может повторяться бесконечно, если указан аргумент `repeat: true`, или повторяться определённое количество раз, если вместе с `repeat: true` используется аргумент `tickCount`.
 ```
 
 
-## Time Scale
+## Масштаб времени
 
-In many games it is often desirable to create  slow-motion or fast-forward effects based on some in
-game events. A very common approach to achieve these results is to manipulate the in game time or
-tick rate.
+Во многих играх часто требуется создавать эффекты замедления или ускорения времени в зависимости от внутриигровых событий. Очень распространённый подход для достижения таких результатов — управление игровым временем или частотой тиков.
 
-To make this manipulation easier, Flame provides a `HasTimeScale` mixin. This mixin can be attached
-to any Flame `Component` and exposes a simple get/set API for `timeScale`. The default value of
-`timeScale` is `1`, implying in-game time of the component is running at the same speed as real life
-time. Setting it to `2` will make the component tick twice as fast and setting it to `0.5` will make
-it tick at half the speed as compared to real life time. This mixin also provides `pause` and `resume`
-methods, which can be used instead of manually setting the timeScale to 0 and 1 respectively.
+Для упрощения этого управления Flame предоставляет примесь `HasTimeScale`. Её можно прикрепить к любому `Component` из Flame, и она предоставляет простой API для получения/установки `timeScale`. Значение по умолчанию — `1`, что означает, что внутриигровое время компонента течёт с той же скоростью, что и реальное время. Установка в `2` заставит компонент тикать вдвое быстрее, а в `0.5` — вдвое медленнее по сравнению с реальным временем. Эта примесь также предоставляет методы `pause` и `resume`, которые можно использовать вместо ручной установки `timeScale` в 0 и 1 соответственно.
 
-Since `FlameGame` is a `Component` too, this mixin can be attached to the `FlameGame` as well. Doing
-so will allow controlling time scale for all the component of the game from a single place.
+Поскольку `FlameGame` тоже является `Component`, эту примесь можно прикрепить и к `FlameGame`. Это позволит управлять масштабом времени для всех компонентов игры из одного места.
 
 ```{note}
-HasTimeScale cannot control the movement of BodyComponent from flame_forge2d individually.
-It is only useful if the whole Game or Forge2DWorld is to be time scaled.
+HasTimeScale не может управлять движением BodyComponent из flame_forge2d по отдельности. Это полезно, только если нужно масштабировать время всей игры или Forge2DWorld.
 ```
 
 ```{flutter-app}
@@ -203,160 +178,149 @@ class MyFlameGame extends FlameGame with HasTimeScale {
 ```
 
 
-## Extensions
+## Расширения
 
-Flame bundles a collection of utility extensions, these extensions are meant to help the developer
-with shortcuts and conversion methods, here you can find the summary of those extensions.
+Flame включает набор полезных расширений, призванных помочь разработчику сокращёнными и преобразующими методами. Здесь представлен обзор этих расширений.
 
-They can all be imported from `package:flame/extensions.dart`
+Все они могут быть импортированы из `package:flame/extensions.dart`
 
 
 ### Canvas
 
-Methods:
+Методы:
 
-- `scaleVector`: Just like `canvas scale` method, but takes a `Vector2` as an argument.
-- `translateVector`: Just like `canvas translate` method, but takes a `Vector2` as an argument.
-- `renderPoint`: renders a single point on the canvas (mostly for debugging purposes).
-- `renderAt` and `renderRotated`: if you are directly rendering to the `Canvas`, you can use these
-  functions to easily manipulate coordinates to render things on the correct places. They change the
-  `Canvas` transformation matrix but reset afterwards.
+- `scaleVector`: Аналогичен методу `canvas scale`, но принимает аргумент `Vector2`.
+- `translateVector`: Аналогичен методу `canvas translate`, но принимает аргумент `Vector2`.
+- `renderPoint`: рисует одну точку на холсте (в основном для отладки).
+- `renderAt` и `renderRotated`: если вы выполняете рендеринг непосредственно на `Canvas`, эти функции позволяют легко манипулировать координатами для отрисовки в нужных местах. Они изменяют матрицу преобразования `Canvas`, но затем сбрасывают её.
 
 
 ### Color
 
-Methods:
+Методы:
 
-- `darken`: Darken the shade of the color by an amount between 0 to 1.
-- `brighten`: Brighten the shade of the color by an amount between 0 to 1.
+- `darken`: Затемняет оттенок цвета на величину от 0 до 1.
+- `brighten`: Осветляет оттенок цвета на величину от 0 до 1.
 
-Factories:
+Фабрики:
 
-- `ColorExtension.fromRGBHexString`: Parses an RGB color from a valid hex string (e.g. #1C1C1C).
-- `ColorExtension.fromARGBHexString`: Parses an ARGB color from a valid hex string (e.g. #FF1C1C1C).
+- `ColorExtension.fromRGBHexString`: Разбирает RGB-цвет из корректной hex-строки (например, #1C1C1C).
+- `ColorExtension.fromARGBHexString`: Разбирает ARGB-цвет из корректной hex-строки (например, #FF1C1C1C).
 
 
 ### Image
 
-Methods:
+Методы:
 
-- `pixelsInUint8`: Retrieves the pixel data as a `Uint8List`, in the `ImageByteFormat.rawRgba`
- pixel format, for the image.
-- `getBoundingRect`: Get the bounding rectangle of the `Image` as a `Rect`.
-- `size`: The size of an `Image` as `Vector2`.
-- `darken`: Darken each pixel of the `Image` by an amount between 0 to 1.
-- `brighten`: Brighten each pixel of the `Image` by an amount between 0 to 1.
+- `pixelsInUint8`: Получает пиксельные данные изображения как `Uint8List` в формате `ImageByteFormat.rawRgba`.
+- `getBoundingRect`: Возвращает ограничивающий прямоугольник изображения как `Rect`.
+- `size`: Размер изображения как `Vector2`.
+- `darken`: Затемняет каждый пиксель изображения на величину от 0 до 1.
+- `brighten`: Осветляет каждый пиксель изображения на величину от 0 до 1.
 
 
 ### Offset
 
-Methods;
+Методы:
 
-- `toVector2`; Creates an `Vector2` from the `Offset`.
-- `toSize`: Creates a `Size` from the `Offset`.
-- `toPoint`: Creates a `Point` from the `Offset`.
-- `toRect`: Creates a `Rect` starting in (0,0) and its bottom right corner is the [Offset].
+- `toVector2`: Создаёт `Vector2` из `Offset`.
+- `toSize`: Создаёт `Size` из `Offset`.
+- `toPoint`: Создаёт `Point` из `Offset`.
+- `toRect`: Создаёт `Rect`, начинающийся в (0,0) с правым нижним углом, равным [Offset].
 
 
 ### Rect
 
-Methods:
+Методы:
 
-- `toOffset`: Creates an `Offset` from the `Rect`.
-- `toVector2`: Creates a `Vector2` starting in (0,0) and goes to the size of the `Rect`.
-- `containsPoint` Whether this `Rect` contains a `Vector2` point or not.
-- `intersectsSegment`; Whether the segment formed by two `Vector2`s intersects this `Rect`.
-- `intersectsLineSegment`: Whether the `LineSegment` intersects the `Rect`.
-- `toVertices`: Turns the four corners of the `Rect` into a list of `Vector2`.
-- `toFlameRectangle`: Converts this `Rect` into a Flame `Rectangle`.
-- `toMathRectangle`: Converts this `Rect` into a `math.Rectangle`.
-- `toGeometryRectangle`: Converts this `Rect` into a `Rectangle` from flame-geom.
-- `transform`: Transforms the `Rect` using a `Matrix4`.
+- `toOffset`: Создаёт `Offset` из `Rect`.
+- `toVector2`: Создаёт `Vector2`, начинающийся в (0,0) и идущий к размеру `Rect`.
+- `containsPoint`: Проверяет, содержит ли этот `Rect` точку `Vector2`.
+- `intersectsSegment`: Проверяет, пересекает ли сегмент, образованный двумя `Vector2`, данный `Rect`.
+- `intersectsLineSegment`: Проверяет, пересекает ли `LineSegment` данный `Rect`.
+- `toVertices`: Превращает четыре угла `Rect` в список `Vector2`.
+- `toFlameRectangle`: Преобразует этот `Rect` в `Rectangle` Flame.
+- `toMathRectangle`: Преобразует этот `Rect` в `math.Rectangle`.
+- `toGeometryRectangle`: Преобразует этот `Rect` в `Rectangle` из flame-geom.
+- `transform`: Трансформирует `Rect` с помощью `Matrix4`.
 
-Factories:
+Фабрики:
 
-- `RectExtension.getBounds`: Construct a `Rect` that represents the bounds of a list of `Vector2`s.
-- `RectExtension.fromCenter`: Construct a `Rect` from a center point (using `Vector2`).
+- `RectExtension.getBounds`: Строит `Rect`, представляющий границы списка `Vector2`.
+- `RectExtension.fromCenter`: Строит `Rect` из центральной точки (используя `Vector2`).
 
 
 ### math.Rectangle
 
-Methods:
+Методы:
 
-- `toRect`: Converts this math `Rectangle` into an ui `Rect`.
+- `toRect`: Преобразует `math.Rectangle` в ui `Rect`.
 
 
 ### Size
 
-Methods:
+Методы:
 
-- `toVector2`; Creates an `Vector2` from the `Size`.
-- `toOffset`: Creates a `Offset` from the `Size`.
-- `toPoint`: Creates a `Point` from the `Size`.
-- `toRect`: Creates a `Rect` starting in (0,0) with the size of `Size`.
+- `toVector2`: Создаёт `Vector2` из `Size`.
+- `toOffset`: Создаёт `Offset` из `Size`.
+- `toPoint`: Создаёт `Point` из `Size`.
+- `toRect`: Создаёт `Rect` начинающийся в (0,0) с размером `Size`.
 
 
 ### Vector2
 
-This class comes from the `vector_math` package and we have some useful extension methods on top of
-what is offered by that package.
+Этот класс из пакета `vector_math`, и у нас есть несколько полезных методов расширения поверх того, что предлагает этот пакет.
 
-Methods:
+Методы:
 
-- `toOffset`: Creates a `Offset` from the `Vector2`.
-- `toPoint`: Creates a `Point` from the `Vector2`.
-- `toRect`: Creates a `Rect` starting in (0,0) with the size of `Vector2`.
-- `toPositionedRect`: Creates a `Rect` starting from [x, y] in the `Vector2` and has the size of
-  the `Vector2` argument.
-- `lerp`: Linearly interpolates the `Vector2` towards another Vector2.
-- `rotate`: Rotates the `Vector2` with an angle specified in radians, it rotates around the
-  optionally defined `Vector2`, otherwise around the center.
-- `scaleTo`: Changes the length of the `Vector2` to the length provided, without changing
-  direction.
-- `moveToTarget`: Smoothly moves a Vector2 in the target direction by a given distance.
+- `toOffset`: Создаёт `Offset` из `Vector2`.
+- `toPoint`: Создаёт `Point` из `Vector2`.
+- `toRect`: Создаёт `Rect`, начинающийся в (0,0) с размером `Vector2`.
+- `toPositionedRect`: Создаёт `Rect`, начинающийся в [x, y] из `Vector2` и имеющий размер из аргумента `Vector2`.
+- `lerp`: Линейно интерполирует `Vector2` в направлении другого `Vector2`.
+- `rotate`: Поворачивает `Vector2` на угол в радианах, вращение происходит вокруг опционально заданного `Vector2`, иначе вокруг центра.
+- `scaleTo`: Изменяет длину `Vector2` до указанной длины без изменения направления.
+- `moveToTarget`: Плавно перемещает `Vector2` в целевом направлении на заданное расстояние.
 
-Factories:
+Фабрики:
 
-- `Vector2Extension.fromInts`: Create a `Vector2` with ints as input.
+- `Vector2Extension.fromInts`: Создаёт `Vector2`, принимая целые числа.
 
-Operators:
+Операторы:
 
-- `&`: Combines two `Vector2`s to form a Rect, the origin should be on the left and the size on the
-  right.
-- `%`: Modulo/Remainder of x and y separately of two `Vector2`s.
+- `&`: Комбинирует два `Vector2` для формирования `Rect`, слева должна быть начальная точка, справа — размер.
+- `%`: Остаток от деления по x и y отдельно для двух `Vector2`.
 
 
 ### Matrix4
 
-This class comes from the `vector_math` package. We have created a few extension methods on top
-of what is already offered by `vector_math`.
+Этот класс из пакета `vector_math`. Мы создали несколько методов расширения поверх того, что уже предлагает `vector_math`.
 
-Methods:
+Методы:
 
-- `translate2`: Translate the `Matrix4` by the given `Vector2`.
-- `transform2`: Create a new `Vector2` by transforming the given `Vector2` using the `Matrix4`.
-- `transformed2`: Transform the input `Vector2` into the output `Vector2`.
+- `translate2`: Перемещает `Matrix4` на заданный `Vector2`.
+- `transform2`: Создаёт новый `Vector2`, трансформируя данный `Vector2` с помощью `Matrix4`.
+- `transformed2`: Трансформирует входной `Vector2` и записывает результат в выходной `Vector2`.
 
-Getters:
+Геттеры:
 
-- `m11`: The first row and first column.
-- `m12`: The first row and second column.
-- `m13`: The first row and third column.
-- `m14`: The first row and fourth column.
-- `m21`: The second row and first column.
-- `m22`: The second row and second column.
-- `m23`: The second row and third column.
-- `m24`: The second row and fourth column.
-- `m31`: The third row and first column.
-- `m32`: The third row and second column.
-- `m33`: The third row and third column.
-- `m34`: The third row and fourth column.
-- `m41`: The fourth row and first column.
-- `m42`: The fourth row and second column.
-- `m43`: The fourth row and third column.
-- `m44`: The fourth row and fourth column.
+- `m11`: Первая строка, первый столбец.
+- `m12`: Первая строка, второй столбец.
+- `m13`: Первая строка, третий столбец.
+- `m14`: Первая строка, четвёртый столбец.
+- `m21`: Вторая строка, первый столбец.
+- `m22`: Вторая строка, второй столбец.
+- `m23`: Вторая строка, третий столбец.
+- `m24`: Вторая строка, четвёртый столбец.
+- `m31`: Третья строка, первый столбец.
+- `m32`: Третья строка, второй столбец.
+- `m33`: Третья строка, третий столбец.
+- `m34`: Третья строка, четвёртый столбец.
+- `m41`: Четвёртая строка, первый столбец.
+- `m42`: Четвёртая строка, второй столбец.
+- `m43`: Четвёртая строка, третий столбец.
+- `m44`: Четвёртая строка, четвёртый столбец.
 
-Factories:
+Фабрики:
 
-- `Matrix4Extension.scale`: Create a scaled `Matrix4`. Either by passing a `Vector4` or `Vector2`
-   as it's first argument, or by passing x y z doubles.
+- `Matrix4Extension.scale`: Создаёт масштабированную `Matrix4`. Можно передать `Vector4` или `Vector2` в качестве первого аргумента, либо отдельные значения x, y, z типа double.
