@@ -1,34 +1,27 @@
-# Post Processing and Shaders
+# Постобработка и шейдеры
 
-Post processing is a technique used in game development to apply visual effects to a component tree
-after it has been rendered. Once a frame is rendered, either directly or rasterized into an
-image, post processing can modify or enhance the visuals.
+Постобработка — это техника, используемая в разработке игр для применения визуальных эффектов к дереву компонентов после его рендеринга. После того как кадр отрисован (напрямую или растеризован в изображение), постобработка может изменить или улучшить визуальное представление.
 
-Post processing leverages fragment shaders to create dynamic visual effects such as blur, bloom,
-color grading, distortion, and lighting adjustments.
+Постобработка использует фрагментные шейдеры для создания динамических визуальных эффектов, таких как размытие, свечение, цветокоррекция, искажения и настройка освещения.
 
-In Flame, the post processing system is modular and flexible, allowing developers to:
+Система постобработки во Flame модульная и гибкая, она позволяет разработчикам:
 
-- Define custom post processes by sub-classing the abstract class `PostProcess`.
-- Apply a single post process effect or chain multiple effects using groups.
-- Manage effects globally with the `CameraComponent` or locally with `PostProcessComponent`.
+- Определять собственные процессы постобработки, создавая подклассы абстрактного класса `PostProcess`.
+- Применять одиночный эффект постобработки или объединять несколько эффектов в цепочки с помощью групп.
+- Управлять эффектами глобально через `CameraComponent` или локально через `PostProcessComponent`.
 
 
-## Key Components of the Post Processing System
+## Ключевые компоненты системы постобработки
 
-- **`PostProcess`**: Abstract base class for defining custom post-processing effects. Implement
-  your effect logic in its `postProcess` method.
+- **`PostProcess`**: Абстрактный базовый класс для определения пользовательских эффектов постобработки. Реализуйте логику эффекта в его методе `postProcess`.
 
-- **`PostProcessComponent`**: Applies a post process specifically to its children, enabling
-  localized effects.
+- **`PostProcessComponent`**: Применяет постобработку именно к своим дочерним элементам, обеспечивая локальные эффекты.
 
-- **`CameraComponent`**: Applies post processes globally to the entire scene or world.
+- **`CameraComponent`**: Применяет постобработку глобально ко всей сцене или миру.
 
-- **`PostProcessGroup`**: Applies multiple post processes in parallel, useful when effects can be
-  applied independently.
+- **`PostProcessGroup`**: Применяет несколько процессов постобработки параллельно; полезно, когда эффекты могут быть применены независимо.
 
-- **`PostProcessSequentialGroup`**: Applies post processes sequentially, where each process uses
-  the output of the previous one.
+- **`PostProcessSequentialGroup`**: Применяет процессы постобработки последовательно, где каждый процесс использует результат предыдущего.
 
 
 ## PostProcessComponent
@@ -40,22 +33,20 @@ In Flame, the post processing system is modular and flexible, allowing developer
 ```
 
 
-## Creating a Custom Post Process
+## Создание пользовательского процесса постобработки
 
-To implement a custom post process:
+Чтобы реализовать собственный процесс постобработки:
 
-1. Subclass `PostProcess`.
-2. Override the `postProcess` method, implementing your rendering logic with `renderSubtree` or
-   `rasterizeSubtree`.
-3. Optionally, implement `onLoad` and `update` methods for managing resources and updating effects
-   each frame.
+1. Создайте подкласс `PostProcess`.
+2. Переопределите метод `postProcess`, реализовав свою логику рендеринга с помощью `renderSubtree` или `rasterizeSubtree`.
+3. При необходимости реализуйте методы `onLoad` и `update` для управления ресурсами и обновления эффектов каждый кадр.
 
-This system makes it easy to add creative and useful visual effects to your Flame game.
+Эта система позволяет легко добавлять креативные и полезные визуальные эффекты в вашу игру на Flame.
 
 
-## Example: pixelation
+## Пример: пикселизация
 
-Here’s an example of creating a pixelation effect using a fragment shader:
+Вот пример создания эффекта пикселизации с использованием фрагментного шейдера:
 
 ```dart
 class PostProcessGame extends FlameGame {
@@ -119,17 +110,15 @@ class PixelationPostProcess extends PostProcess {
 
 ```
 
-In this example:
+В этом примере:
 
-- A fragment shader (`pixelation.frag`) is loaded and used to apply a pixelation effect.
+- Загружается фрагментный шейдер (`pixelation.frag`) и используется для применения эффекта пикселизации.
 
-- The `rasterizeSubtree` method captures the component tree rendering as a texture, which the
-  shader uses to generate the pixelated output.
+- Метод `rasterizeSubtree` захватывает рендеринг дерева компонентов в виде текстуры, которую шейдер использует для создания пикселизированного вывода.
 
-- The effect dynamically changes over time, creating an animated pixelation effect.
+- Эффект динамически изменяется с течением времени, создавая анимированный эффект пикселизации.
 
-This example demonstrates how straightforward it is to add visual effects to your Flame game using
-the post-processing system.
+Этот пример демонстрирует, насколько просто добавлять визуальные эффекты в игру на Flame с помощью системы постобработки.
 
 ```{flutter-app}
 :sources: ../flame/examples
@@ -139,7 +128,7 @@ the post-processing system.
 :height: 180
 ```
 
-The pixelation shader file:
+Файл шейдера пикселизации:
 
 ```glsl
 #version 460 core
@@ -162,15 +151,13 @@ void main() {
 ```
 
 
-## Advanced Example: Crystal Ball
+## Продвинутый пример: Хрустальный шар
 
-For a more advanced use case of post processing, check out the
-[Crystal Ball example](https://examples.flame-engine.org/), which demonstrates camera-level post
-processing and chaining multiple effects using `PostProcessSequentialGroup`.
+Более сложный пример использования постобработки можно найти в [примере с Хрустальным шаром](https://examples.flame-engine.org/), где демонстрируется постобработка на уровне камеры и объединение нескольких эффектов с помощью `PostProcessSequentialGroup`.
 
-![Crystal Ball Example](../images/crystal_ball.png)
+![Пример Хрустального шара](../images/crystal_ball.png)
 
-Here's how multiple post-processing effects are combined on a camera:
+Вот как несколько эффектов постобработки комбинируются на камере:
 
 ```dart
 class CrystalBallGame extends FlameGame<CrystalBallGameWorld> {
@@ -197,12 +184,10 @@ class CrystalBallGame extends FlameGame<CrystalBallGameWorld> {
 }
 ```
 
-In this code:
+В этом коде:
 
-- The camera applies a `PostProcessGroup` containing multiple effects.
-- `PostProcessSequentialGroup` chains two effects (`FireflyPostProcess` and `WaterPostProcess`)
-  sequentially.
-- An additional parallel effect (`ForegroundFogPostProcess`) is applied alongside the sequential
-  group.
+- Камера применяет `PostProcessGroup`, содержащий несколько эффектов.
+- `PostProcessSequentialGroup` последовательно объединяет два эффекта (`FireflyPostProcess` и `WaterPostProcess`).
+- Дополнительный параллельный эффект (`ForegroundFogPostProcess`) применяется вместе с последовательной группой.
 
-You can explore the source code [on GitHub](https://github.com/flame-engine/flame/tree/main/examples/games/crystal_ball).
+Вы можете изучить исходный код [на GitHub](https://github.com/flame-engine/flame/tree/main/examples/games/crystal_ball).
