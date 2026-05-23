@@ -1,7 +1,6 @@
-# Images
+# Изображения
 
-To start off you must have an appropriate folder structure and add the files to the `pubspec.yaml`
-file, like this:
+Для начала необходимо создать соответствующую структуру папок и добавить файлы в `pubspec.yaml`, например:
 
 ```yaml
 flutter:
@@ -10,43 +9,32 @@ flutter:
     - assets/images/enemy.png
 ```
 
-Images can be in any format supported by Flutter, which include: JPEG, WebP, PNG, GIF, animated GIF,
-animated WebP, BMP, and WBMP. Other formats would require additional libraries. For example, SVG
-images can be loaded via the `flame_svg` library.
+Изображения могут быть в любом формате, поддерживаемом Flutter: JPEG, WebP, PNG, GIF, анимированный GIF, анимированный WebP, BMP и WBMP. Для других форматов потребуются дополнительные библиотеки. Например, SVG можно загрузить с помощью библиотеки `flame_svg`.
 
 
-## Loading images
+## Загрузка изображений
 
-Flame bundles an utility class called `Images` that allows you to easily load and cache images from
-the assets directory into memory.
+Flame включает служебный класс `Images`, который позволяет легко загружать изображения из папки assets и кешировать их в памяти.
 
-Flutter has a handful of types related to images, and converting everything properly from a local
-asset to an `Image` that can be drawn on Canvas is a bit convoluted. This class allows you to obtain
-an `Image` that can be drawn on the `Canvas` using the `drawImageRect` method.
+В Flutter существует несколько типов, связанных с изображениями, и корректное преобразование локального ассета в `Image`, который можно отрисовать на `Canvas`, несколько запутанно. Этот класс позволяет получить `Image`, пригодный для рисования на `Canvas` методом `drawImageRect`.
 
-It automatically caches any image loaded by filename, so you can safely call it many times.
+Он автоматически кеширует любое изображение, загруженное по имени файла, поэтому его можно безопасно вызывать многократно.
 
-The methods for loading and clearing the cache are: `load`, `loadAll`, `clear` and `clearCache`.
-They return `Future`s for loading the images. These futures must be awaited for before the images
-can be used in any way. If you do not want to await these futures right away, you can initiate
-multiple `load()` operations and then await for all of them at once using `Images.ready()` method.
+Методы для загрузки и очистки кеша: `load`, `loadAll`, `clear` и `clearCache`.
+Они возвращают `Future` для загрузки изображений. Эти футуры должны быть разрешены (awaited), прежде чем изображения можно будет использовать. Если вы не хотите ожидать их сразу, можно инициировать несколько операций `load()`, а затем дождаться всех разом с помощью метода `Images.ready()`.
 
-To synchronously retrieve a previously cached image, the `fromCache` method can be used. If an image
-with that key was not previously loaded, it will throw an exception.
+Для синхронного получения ранее закешированного изображения используйте метод `fromCache`. Если изображение с таким ключом ранее не загружалось, будет выброшено исключение.
 
-To add an already loaded image to the cache, the `add` method can be used and you can set the key
-that the image should have in the cache. You can retrieve all the keys in the cache using the `keys`
-getter.
+Чтобы добавить уже загруженное изображение в кеш, используйте метод `add`, указав ключ, под которым изображение должно храниться. Получить все ключи кеша можно через геттер `keys`.
 
-You can also use `ImageExtension.fromPixels()` to dynamically create an image during the game.
+Также можно использовать `ImageExtension.fromPixels()` для динамического создания изображения во время игры.
 
-For `clear` and `clearCache`, do note that `dispose` is called for each removed image from the
-cache, so make sure that you don't use the image afterwards.
+Для `clear` и `clearCache` обратите внимание, что для каждого удаляемого из кеша изображения вызывается `dispose`, поэтому убедитесь, что вы не используете изображение после этого.
 
 
-### Standalone usage
+### Автономное использование
 
-It can manually be used by instantiating it:
+Можно использовать класс, создав его экземпляр:
 
 ```dart
 import 'package:flame/cache.dart';
@@ -54,20 +42,20 @@ final imagesLoader = Images();
 Image image = await imagesLoader.load('yourImage.png');
 ```
 
-But Flame also offers two ways of using this class without instantiating it yourself.
+Но Flame также предлагает два способа использования этого класса без создания экземпляра вручную.
 
 
 ### Flame.images
 
-There is a singleton, provided by the `Flame` class, that can be used as a global image cache.
+Существует синглтон, предоставляемый классом `Flame`, который можно использовать как глобальный кеш изображений.
 
-Example:
+Пример:
 
 ```dart
 import 'package:flame/flame.dart';
 import 'package:flame/sprite.dart';
 
-// inside an async context
+// внутри асинхронного контекста
 Image image = await Flame.images.load('player.png');
 
 final playerSprite = Sprite(image);
@@ -76,13 +64,11 @@ final playerSprite = Sprite(image);
 
 ### Game.images
 
-The `Game` class offers some utility methods for handling images loading too. It bundles an instance
-of the `Images` class, that can be used to load image assets to be used during the game. The game
-will automatically free the cache when the game widget is removed from the widget tree.
+Класс `Game` также предлагает несколько утилитных методов для загрузки изображений. Он содержит экземпляр класса `Images`, который можно использовать для загрузки графических ресурсов, используемых в игре. Игра автоматически освободит кеш, когда игровой виджет будет удалён из дерева виджетов.
 
-The `onLoad` method from the `Game` class is a great place for the initial assets to be loaded.
+Метод `onLoad` класса `Game` — отличное место для начальной загрузки ресурсов.
 
-Example:
+Пример:
 
 ```dart
 class MyGame extends Game {
@@ -91,29 +77,29 @@ class MyGame extends Game {
 
   @override
   Future<void> onLoad() async {
-    // Note that you could also use Sprite.load for this.
+    // Обратите внимание, что для этого можно также использовать Sprite.load
     final playerImage = await images.load('player.png');
     player = Sprite(playerImage);
   }
 }
 ```
 
-Loaded assets can also be retrieved while the game is running by `images.fromCache`, for example:
+Загруженные ресурсы также можно получать во время выполнения через `images.fromCache`, например:
 
 ```dart
 class MyGame extends Game {
 
-  // attributes omitted
+  // атрибуты опущены
 
   @override
   Future<void> onLoad() async {
-    // other loads omitted
+    // прочие загрузки опущены
     await images.load('bullet.png');
   }
 
   void shoot() {
-    // This is just an example, in your game you probably don't want to
-    // instantiate new [Sprite] objects every time you shoot.
+    // Это всего лишь пример, в реальной игре вы, вероятно, не захотите
+    // создавать новые объекты [Sprite] при каждом выстреле.
     final bulletSprite = Sprite(images.fromCache('bullet.png'));
     _bullets.add(bulletSprite);
   }
@@ -121,17 +107,13 @@ class MyGame extends Game {
 ```
 
 
-## Loading images over the network
+## Загрузка изображений из сети
 
-The Flame core package doesn't offer a built in method to loading images from the network.
+Основной пакет Flame не предлагает встроенного метода для загрузки изображений по сети.
 
-The reason for that is that Flutter/Dart does not have a built in http client, which requires
-a package to be used and since there are a couple of packages available out there, we refrain
-from forcing the user to use a specific package.
+Причина в том, что во Flutter/Dart нет встроенного HTTP-клиента, что требует использования отдельного пакета, и поскольку доступно несколько вариантов, мы воздерживаемся от принуждения пользователей к конкретному пакету.
 
-With that said, it is quite simple to load images from the network once a http client package
-is chosen by the user. The following snippet shows how an `Image` can be fetched from the web
-using the [http](https://pub.dev/packages/http) package.
+Тем не менее, загрузить изображения из сети довольно просто, если выбран HTTP-клиент. Следующий фрагмент показывает, как получить `Image` из интернета с помощью пакета [http](https://pub.dev/packages/http).
 
 ```dart
 import 'package:http/http.dart' as http;
@@ -142,27 +124,24 @@ final image = await decodeImageFromList(response.bytes);
 ```
 
 ```{note}
-Check [`flame_network_assets`](https://pub.dev/packages/flame_network_assets)
-for a ready to use network assets solution that provides a built in cache.
+Ознакомьтесь с [`flame_network_assets`](https://pub.dev/packages/flame_network_assets) — готовым решением для сетевых ресурсов со встроенным кешем.
 ```
 
 
-## Sprite
+## Sprite (Спрайт)
 
-Flame offers a `Sprite` class that represents an image, or a region of an image.
+Flame предлагает класс `Sprite`, представляющий изображение или область изображения.
 
-You can create a `Sprite` by providing it an `Image` and coordinates that defines the piece of the
-image that that sprite represents.
+Вы можете создать `Sprite`, передав ему `Image` и координаты, определяющие фрагмент изображения, который представляет спрайт.
 
-For example, this will create a sprite representing the whole image of the file passed:
+Например, так создаётся спрайт, представляющий всё изображение из переданного файла:
 
 ```dart
 final image = await images.load('player.png');
 Sprite player = Sprite(image);
 ```
 
-You can also specify the coordinates in the original image where the sprite is located. This allows
-you to use sprite sheets and reduce the number of images in memory, for example:
+Также можно указать координаты в исходном изображении, где находится спрайт. Это позволяет использовать спрайт-листы и уменьшить количество изображений в памяти, например:
 
 ```dart
 final image = await images.load('player.png');
@@ -173,50 +152,38 @@ final playerFrame = Sprite(
 );
 ```
 
-The default values are `(0.0, 0.0)` for `srcPosition` and `null` for `srcSize` (meaning it will use
-the full width/height of the source image).
+Значения по умолчанию: `(0.0, 0.0)` для `srcPosition` и `null` для `srcSize` (что означает использование полной ширины/высоты исходного изображения).
 
-The `Sprite` class has a render method, that allows you to render the sprite onto a `Canvas`:
+Класс `Sprite` имеет метод `render`, позволяющий отрисовать спрайт на `Canvas`:
 
 ```dart
 final image = await images.load('block.png');
 Sprite block = Sprite(image);
 
-// in your render method
+// в вашем методе render
 block.render(canvas, 16.0, 16.0); //canvas, width, height
 ```
 
-You must pass the size to the render method, and the image will be resized accordingly.
+В метод `render` необходимо передать размер, и изображение будет соответственно масштабировано.
 
-All render methods from the `Sprite` class can receive a `Paint` instance as the optional named
-parameter `overridePaint` that parameter will override the current `Sprite` paint instance for that
-render call.
+Все методы рендеринга класса `Sprite` могут принимать экземпляр `Paint` как опциональный именованный параметр `overridePaint`, который переопределяет текущий `Paint` спрайта для этого вызова.
 
-`Sprite`s can also be used as widgets, to do so just use `SpriteWidget` class.
-Here is a complete
-[example using sprite as widgets](https://github.com/flame-engine/flame/blob/main/examples/lib/stories/widgets/sprite_widget_example.dart).
+Спрайты также можно использовать как виджеты, для этого применяется класс `SpriteWidget`. Вот полный [пример использования спрайтов как виджетов](https://github.com/flame-engine/flame/blob/main/examples/lib/stories/widgets/sprite_widget_example.dart).
 
 
-### Sprite Bleeding
+### Sprite Bleeding (Размытие краёв спрайта)
 
-In some cases when rendering sprites next to each other, when the edges of the sprites are touching,
-you may see a rendering artifact called "ghost lines" between them.
+В некоторых случаях, когда спрайты отрисовываются вплотную друг к другу и их края соприкасаются, может возникнуть артефакт рендеринга — «призрачные линии» между ними.
 
-This happens especially when the sprites are positioned in coordinates that are not whole numbers,
-or when scaling is applied to the canvas.
+Это особенно заметно, когда спрайты расположены в координатах, не являющихся целыми числами, или когда к холсту применяется масштабирование.
 
-Those lines appear because floating-point numbers aren't 100% accurate in computer science. Due
-to rounding errors, even though the sprites are supposed to be touching, they are not rendered that
-way.
+Такие линии появляются из-за того, что числа с плавающей точкой не абсолютно точны в компьютерных вычислениях. Из-за ошибок округления спрайты, которые должны соприкасаться, отображаются не так.
 
-One way to avoid this is to use a technique called "bleeding", which consists of adding a very small
-margin to the edges of the sprites, so that when they are rendered, they will overlap a bit and thus
-avoid rendering the ghost lines.
+Один из способов избежать этого — использовать технику «bleeding» (размытие), которая заключается в добавлении очень маленького отступа по краям спрайтов, чтобы при рендеринге они слегка перекрывались и таким образом предотвращали появление призрачных линий.
 
-Flame provides a way to do this by using the `bleed` parameter in the `Sprite` render method. This
-is a double value that represents the amount of bleeding to be applied to the edges of the sprite.
+Flame предоставляет возможность сделать это с помощью параметра `bleed` в методе `render` спрайта. Это значение типа double, представляющее величину отступа, применяемого к краям спрайта.
 
-For example, if you do:
+Например:
 
 ```dart
 final image = await images.load('player.png');
@@ -228,11 +195,9 @@ final playerFrame = Sprite(
 playerFrame.render(canvas, 16.0, 16.0, bleed: 1.0);
 ```
 
-The sprite will be rendered with a bleed amount of 1.0, meaning that it will have
-a value of 1 pixels added to each edge of the sprite.
+Спрайт будет отрендерен с отступом 1.0, то есть к каждому краю спрайта добавится по 1 пикселю.
 
-For users of the `SpriteComponent`, using the bleeding feature is also quite simple, it is just
-a matter of passing a value to the `bleed` attribute in the component constructor:
+Для пользователей `SpriteComponent` использование этой возможности также очень просто: достаточно передать значение атрибуту `bleed` в конструкторе компонента:
 
 ```dart
 final sprite = Sprite(...);
@@ -240,29 +205,24 @@ final sprite = Sprite(...);
 final spriteComponent = SpriteComponent(
   sprite: sprite,
   size: Vector2.all(16.0),
-  bleed: 1.0, // bleed value
+  bleed: 1.0, // значение отступа
 );
 ```
 
-Note that the amount of the bleed value depends on the size of the sprite, so a bleed value of 1.0
-might not make much difference for a sprite of 100x100.
+Обратите внимание, что величина отступа зависит от размера спрайта, так что значение 1.0 может не дать заметного эффекта для спрайта размером 100x100.
 
 
-### Sprite Rasterization
+### Sprite Rasterization (Растеризация спрайта)
 
-Rasterizing a sprite is the process of extracting the selected area of the image from that sprite,
-storing it in memory, and returning a new Sprite that contains that rasterized image.
+Растеризация спрайта — это процесс извлечения выбранной области изображения из спрайта, сохранения её в памяти и возврата нового `Sprite`, содержащего это растеризованное изображение.
 
-That can be used for a variety of reasons, one of the most useful ones is to avoid texture leaking
-when using a sprite sheet.
+Это может использоваться по разным причинам, одна из наиболее полезных — предотвращение «просачивания текстуры» (texture leaking) при использовании спрайт-листа.
 
-Texture leaking can happen for the same reason as in the issue explained above (floating point
-rounding errors), and it causes parts outside of a sprite selection to also be rendered.
+Просачивание текстуры может происходить по той же причине, что описана выше (ошибки округления чисел с плавающей точкой), и приводит к тому, что части за пределами выбранной области спрайта также отрисовываются.
 
-Extracting the sprite selection and rasterizing it before rendering is a way to avoid this issue,
-since it then renders an image that only contains the selected area.
+Извлечение выделенной области спрайта и её растеризация перед рендерингом — способ избежать этой проблемы, так как при этом рендерится изображение, содержащее только выбранную область.
 
-Example of using a `RasterSpriteComponent`:
+Пример использования `RasterSpriteComponent`:
 
 ```dart
 final sprite = await Sprite.load('flame.png');
@@ -272,10 +232,9 @@ final rasterSpriteComponent = RasterSpriteComponent(
 );
 ```
 
-When using the `RasterSpriteComponent`, it will automatically rasterize the sprite when it is
-loaded.
+При использовании `RasterSpriteComponent` спрайт будет автоматически растеризован при загрузке.
 
-If you need to rasterize a sprite manually, you can use the `Sprite.rasterize` method:
+Если нужно растеризовать спрайт вручную, используйте метод `Sprite.rasterize`:
 
 ```dart
 final image = await images.load('player.png');
@@ -288,10 +247,7 @@ final playerFrame = Sprite(
 final rasterizedSprite = await playerFrame.rasterize();
 ```
 
-By default, the `rasterize` method will use `Flame.images` to cache the rasterized image,
-auto generating a key based on the sprite's source position and size. If you want to use a custom
-key for the rasterized image, or use a different cache object, you can pass it as an optional
-parameter:
+По умолчанию метод `rasterize` использует `Flame.images` для кеширования растеризованного изображения, автоматически генерируя ключ на основе позиции и размера исходного спрайта. Если вы хотите использовать собственный ключ или другой объект кеша, передайте их как опциональные параметры:
 
 ```dart
 final rasterizedSprite = await playerFrame.rasterize(
@@ -303,28 +259,22 @@ final rasterizedSprite = await playerFrame.rasterize(
 
 ## SpriteBatch
 
-If you have a sprite sheet (also called an image atlas, which is an image with smaller images
-inside), and would like to render it effectively - `SpriteBatch` handles that job for you.
+Если у вас есть спрайт-лист (также называемый атласом изображений — изображение, содержащее множество мелких изображений), и вы хотите эффективно его отрисовать — `SpriteBatch` сделает эту работу за вас.
 
-Give it the filename of the image, and then add rectangles which describes various part of the
-image, in addition to transforms (position, scale and rotation) and optional colors.
+Передайте ему имя файла изображения, а затем добавляйте прямоугольники, описывающие различные части изображения, вместе с трансформациями (положение, масштаб и поворот) и опциональными цветами.
 
-You render it with a `Canvas` and an optional `Paint`, `BlendMode` and `CullRect`.
+Вы рендерите его с помощью `Canvas` и опциональных `Paint`, `BlendMode` и `CullRect`.
 
-A `SpriteBatchComponent` is also available for your convenience.
+Для удобства также доступен `SpriteBatchComponent`.
 
-See how to use it in the
-[SpriteBatch examples](https://github.com/flame-engine/flame/blob/main/examples/lib/stories/sprites/sprite_batch_example.dart)
+Пример использования смотрите в [примерах SpriteBatch](https://github.com/flame-engine/flame/blob/main/examples/lib/stories/sprites/sprite_batch_example.dart).
 
 
-## ImageComposition
+## ImageComposition (Композиция изображений)
 
-In some cases you may want to merge multiple images into a single image; this is called
-[Compositing](https://en.wikipedia.org/wiki/Compositing). This can be useful for example when
-working with the [SpriteBatch](#spritebatch) API to optimize your drawing calls.
+В некоторых случаях может потребоваться объединить несколько изображений в одно; это называется [композитинг](https://en.wikipedia.org/wiki/Compositing). Это может быть полезно, например, при работе с API [SpriteBatch](#spritebatch) для оптимизации вызовов отрисовки.
 
-For such use cases Flame comes with the `ImageComposition` class. This allows you to add multiple
-images, each at their own position, onto a new image:
+Для таких случаев в Flame есть класс `ImageComposition`. Он позволяет добавлять несколько изображений, каждое со своей позицией, на новое изображение:
 
 ```dart
 final composition = ImageComposition()
@@ -339,30 +289,24 @@ Image image = await composition.compose();
 Image imageSync = composition.composeSync();
 ```
 
-As you can see, two versions of composing image are available. Use `ImageComposition.compose()` for
-the async approach. Or use the new `ImageComposition.composeSync()` function to rasterize the
-image into GPU context using the benefits of the `Picture.toImageSync` function.
+Как видите, доступны две версии композиции. Используйте `ImageComposition.compose()` для асинхронного подхода или новую функцию `ImageComposition.composeSync()` для растрирования изображения в контекст GPU, используя преимущества `Picture.toImageSync`.
 
-**Note:** Composing images is expensive, we do not recommend you run this every tick as it affect
-the performance badly. Instead we recommend to have your compositions pre-rendered so you can just
-reuse the output image.
+**Примечание:** Композиция изображений — дорогая операция, не рекомендуется выполнять её на каждом тике, так как это сильно влияет на производительность. Вместо этого рекомендуется предварительно рендерить композиции и переиспользовать выходное изображение.
 
 
-## Animation
+## Animation (Анимация)
 
-The Animation class helps you create a cyclic animation of sprites.
+Класс Animation помогает создать циклическую анимацию из спрайтов.
 
-You can create it by passing a list of equally sized sprites and the stepTime (that is, how many
-seconds it takes to move to the next frame):
+Его можно создать, передав список спрайтов одинакового размера и `stepTime` (время в секундах для перехода к следующему кадру):
 
 ```dart
 final a = SpriteAnimationTicker(SpriteAnimation.spriteList(sprites, stepTime: 0.02));
 ```
 
-After the animation is created, you need to call its `update` method and render the current frame's
-sprite on your game instance.
+После создания анимации необходимо вызывать её метод `update` и рендерить спрайт текущего кадра в экземпляре игры.
 
-Example:
+Пример:
 
 ```dart
 class MyGame extends Game {
@@ -382,7 +326,7 @@ class MyGame extends Game {
 }
 ```
 
-A better alternative to generate a list of sprites is to use the `fromFrameData` constructor:
+Более удобный способ создания списка спрайтов — использование конструктора `fromFrameData`:
 
 ```dart
 const amountOfFrames = 8;
@@ -396,15 +340,11 @@ final a = SpriteAnimation.fromFrameData(
 );
 ```
 
-This constructor makes creating an `Animation` very easy when using sprite sheets.
+Этот конструктор значительно упрощает создание `Animation` при использовании спрайт-листов.
 
-In the constructor you pass an image instance and the frame data, which contains some parameters
-that can be used to describe the animation. Check the documentation on the constructors available on
-the `SpriteAnimationFrameData` class to see all the parameters.
+В конструктор передаётся экземпляр изображения и данные кадра, которые содержат параметры, описывающие анимацию. Смотрите документацию по доступным конструкторам класса `SpriteAnimationFrameData` для ознакомления со всеми параметрами.
 
-If you use Aseprite for your animations, Flame does provide some support for Aseprite animation's
-JSON data. To use this feature you will need to export the Sprite Sheet's JSON data, and use
-something like the following snippet:
+Если вы используете Aseprite для создания анимаций, Flame предоставляет некоторую поддержку JSON-данных анимаций Aseprite. Чтобы воспользоваться этой функцией, экспортируйте JSON-данные спрайт-листа и используйте следующий подход:
 
 ```dart
 final image = await images.load('chopper.png');
@@ -412,25 +352,18 @@ final jsonData = await assets.readJson('chopper.json');
 final animation = SpriteAnimation.fromAsepriteData(image, jsonData);
 ```
 
-**Note:** trimmed sprite sheets are not supported by flame, so if you export your sprite sheet this
-way, it will have the trimmed size, not the sprite original size.
+**Примечание:** обрезанные (trimmed) спрайт-листы не поддерживаются Flame, поэтому если вы экспортируете спрайт-лист таким образом, он будет иметь обрезанный размер, а не исходный размер спрайта.
 
-Animations, after created, have an update and render method; the latter renders the current frame,
-and the former ticks the internal clock to update the frames.
+После создания анимации имеют методы `update` и `render`; последний отрисовывает текущий кадр, а первый обновляет внутренний таймер для смены кадров.
 
-Animations are normally used inside `SpriteAnimationComponent`s, but custom components with several
-Animations can be created as well.
+Обычно анимации используются внутри `SpriteAnimationComponent`, но также можно создавать и собственные компоненты с несколькими анимациями.
 
-To learn more, check out the full example code of
-[using animations as widgets](https://github.com/flame-engine/flame/blob/main/examples/lib/stories/widgets/sprite_animation_widget_example.dart).
+Для получения дополнительной информации ознакомьтесь с полным примером кода [использования анимаций как виджетов](https://github.com/flame-engine/flame/blob/main/examples/lib/stories/widgets/sprite_animation_widget_example.dart).
 
 
-## SpriteSheet
+## SpriteSheet (Спрайт-лист)
 
-Sprite sheets are big images with several frames of the same sprite on it and is a very good way to
-organize and store your animations. Flame provides a very simple utility class to deal with
-SpriteSheets, using which you can load your sprite sheet image and extract animations from it as
-well. Following is a simple example of how to use it:
+Спрайт-листы — это большие изображения, содержащие несколько кадров одного спрайта; это очень удобный способ организации и хранения анимаций. Flame предоставляет очень простой служебный класс для работы со спрайт-листами, с помощью которого можно загрузить изображение спрайт-листа и извлечь из него анимации. Ниже приведён простой пример использования:
 
 ```dart
 import 'package:flame/sprite.dart';
@@ -443,100 +376,88 @@ final spriteSheet = SpriteSheet(
 final animation = spriteSheet.createAnimation(0, stepTime: 0.1);
 ```
 
-Now you can use the animation directly or use it in an animation component.
+Теперь вы можете использовать анимацию напрямую или в компоненте анимации.
 
-You can also create a custom animation by retrieving individual `SpriteAnimationFrameData` using
-either `SpriteSheet.createFrameData` or `SpriteSheet.createFrameDataFromId`:
+Также можно создать пользовательскую анимацию, получив отдельные `SpriteAnimationFrameData` с помощью `SpriteSheet.createFrameData` или `SpriteSheet.createFrameDataFromId`:
 
 ```dart
 final animation = SpriteAnimation.fromFrameData(
   imageInstance, 
   SpriteAnimationData([
-    spriteSheet.createFrameDataFromId(1, stepTime: 0.1), // by id
-    spriteSheet.createFrameData(2, 3, stepTime: 0.3), // row, column
-    spriteSheet.createFrameDataFromId(4, stepTime: 0.1), // by id
+    spriteSheet.createFrameDataFromId(1, stepTime: 0.1), // по идентификатору
+    spriteSheet.createFrameData(2, 3, stepTime: 0.3), // строка, столбец
+    spriteSheet.createFrameDataFromId(4, stepTime: 0.1), // по идентификатору
   ]),
 );
 ```
 
-If you don't need any kind of animation and instead only want an instance of a `Sprite` on the
-`SpriteSheet` you can use the `getSprite` or `getSpriteById` methods:
+Если вам не нужна анимация, а нужен только экземпляр `Sprite` из `SpriteSheet`, используйте методы `getSprite` или `getSpriteById`:
 
 ```dart
-spriteSheet.getSpriteById(2); // by id
-spriteSheet.getSprite(0, 0); // row, column
+spriteSheet.getSpriteById(2); // по идентификатору
+spriteSheet.getSprite(0, 0); // строка, столбец
 ```
 
-See a full example of the [`SpriteSheet` class](https://github.com/flame-engine/flame/blob/main/examples/lib/stories/sprites/sprite_sheet_example.dart)
-for more details on how to work with it.
+Более подробный пример работы с [`SpriteSheet`](https://github.com/flame-engine/flame/blob/main/examples/lib/stories/sprites/sprite_sheet_example.dart) смотрите по ссылке.
 
 
 ## HasAutoBatchedChildren
 
-Flame introduces automatic sprite batching for improved rendering performance via the
-`HasAutoBatchedChildren` mixin. This mixin enables groups of sprite components to be rendered in a
-single draw call per atlas, significantly reducing rendering overhead and improving performance,
-especially when managing many similar sprites.
+Flame представляет автоматическую пакетную обработку спрайтов для повышения производительности рендеринга через примесь `HasAutoBatchedChildren`. Эта примесь позволяет группам спрайтовых компонентов рендериться за один вызов отрисовки на каждый атлас, значительно снижая накладные расходы и улучшая производительность, особенно при управлении множеством похожих спрайтов.
 
 
-### Purpose
+### Назначение
 
-The `HasAutoBatchedChildren` mixin is designed for scenarios where you have a group of sprite or
-animation components (such as enemies, bullets, or particles) that share the same atlas image. By
-batching their rendering, Flame minimizes the number of draw calls, which is a major performance
-bottleneck in graphics applications.
+Примесь `HasAutoBatchedChildren` предназначена для сценариев, где у вас есть группа спрайтовых или анимационных компонентов (таких как враги, пули или частицы), использующих одно и то же изображение атласа. Пакетируя их рендеринг, Flame сводит к минимуму количество вызовов отрисовки, что является одним из главных узких мест производительности в графических приложениях.
 
 
-### When to Use
+### Когда использовать
 
-Use this mixin when you have many `SpriteComponent` or `SpriteAnimationComponent` children that:
+Используйте эту примесь, когда у вас много дочерних элементов `SpriteComponent` или `SpriteAnimationComponent`, которые:
 
-- Use the same atlas image
-- Have uniform scale
-- Do not require custom decorators or snapshot caching
-- Do not have complex paint effects
+- Используют одно и то же изображение атласа
+- Имеют одинаковый масштаб
+- Не требуют пользовательских декораторов или кеширования снимков
+- Не имеют сложных эффектов рисования
 
-This is ideal for groups of similar objects, such as enemy waves or particle systems.
+Это идеально подходит для групп похожих объектов, таких как волны врагов или системы частиц.
 
 
-### How to Use
+### Как использовать
 
-To enable batching, simply add the mixin to your group component:
+Чтобы включить пакетную обработку, просто добавьте примесь к вашему компоненту-группе:
 
 ```dart
 import 'package:flame/components.dart';
 import 'package:flame/src/components/mixins/has_auto_batched_children.dart';
 
 class EnemyGroup extends PositionComponent with HasAutoBatchedChildren {
-  // Add SpriteComponent or SpriteAnimationComponent children
+  // Добавляйте дочерние SpriteComponent или SpriteAnimationComponent
 }
 ```
 
-You can toggle batching at runtime:
+Вы можете переключать пакетную обработку во время выполнения:
 
 ```dart
 final group = EnemyGroup();
-group.batchingEnabled = false; // falls back to individual rendering
+group.batchingEnabled = false; // возврат к индивидуальному рендерингу
 ```
 
-The mixin works by intercepting per-child rendering (`renderChild`) and post-children rendering
-hooks (`afterChildrenRendered`), accumulating eligible children for batch rendering and flushing
-batches at priority boundaries to preserve correct render order.
+Примесь работает, перехватывая рендеринг каждого дочернего элемента (`renderChild`) и хуки после рендеринга дочерних элементов (`afterChildrenRendered`), накапливая подходящие компоненты для пакетного рендеринга и выполняя сброс пакетов на границах приоритетов, чтобы сохранить правильный порядок отрисовки.
 
 
-### Example
+### Пример
 
 ```dart
 class BulletGroup extends PositionComponent with HasAutoBatchedChildren {
-  // Add SpriteComponent children representing bullets
+  // Добавляйте дочерние SpriteComponent, представляющие пули
 }
 
-// Add bullets to the group
+// Добавление пуль в группу
 bulletGroup.add(BulletSpriteComponent(...));
 ```
 
 
-#### Rogue Shooter Example
+#### Пример Rogue Shooter
 
-See the [Rogue Shooter game example](https://examples.flame-engine.org/#/Sample_Games_Rogue_Shooter)
-for a real-world usage of this mixin.
+Смотрите [пример игры Rogue Shooter](https://examples.flame-engine.org/#/Sample_Games_Rogue_Shooter) для реального использования этой примеси.
