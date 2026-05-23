@@ -1,4 +1,93 @@
-# Long Press Events
+# События долгого нажатия
+
+**События долгого нажатия** происходят, когда пользователь нажимает и удерживает указатель (палец или мышь) на компоненте в течение продолжительного времени. Этот жест обычно используется для контекстных меню, поведения перетаскивания при удержании или любых действий, требующих осознанного длительного касания.
+
+Для компонентов, которые должны реагировать на долгие нажатия, добавьте примесь `LongPressCallbacks`.
+
+- Эта примесь добавляет в компонент четыре переопределяемых метода: `onLongPressStart`, `onLongPressMoveUpdate`, `onLongPressEnd` и `onLongPressCancel`.
+- По умолчанию `isLongPressing` отслеживается автоматически и может быть доступно вашему компоненту.
+- Компонент должен реализовывать `containsLocalPoint()` (уже реализован в `PositionComponent`, так что в большинстве случаев ничего делать не нужно). Этот метод позволяет Flame определить, произошло ли событие внутри компонента. Вы можете переопределить его, чтобы он всегда возвращал `true`, и тогда компонент будет получать все события долгого нажатия независимо от позиции.
+
+```dart
+class MyComponent extends PositionComponent with LongPressCallbacks {
+  MyComponent() : super(size: Vector2.all(32));
+
+  @override
+  void onLongPressStart(LongPressStartEvent event) {
+    super.onLongPressStart(event); // обрабатывает внутреннее обновление isLongPressing
+    // Выполнить действие при распознавании долгого нажатия
+  }
+
+  @override
+  void onLongPressEnd(LongPressEndEvent event) {
+    super.onLongPressEnd(event); // обрабатывает внутреннее обновление isLongPressing
+    // Выполнить действие при завершении долгого нажатия
+  }
+}
+```
+
+## Анатомия долгого нажатия
+
+### onLongPressStart
+
+Первое событие в последовательности долгого нажатия. Оно срабатывает, как только указатель удерживается достаточно долго, чтобы быть распознанным как долгое нажатие. По умолчанию `LongPressGestureRecognizer` Flutter использует `kLongPressTimeout` (500 мс) в качестве определения долгого нажатия.
+
+`LongPressStartEvent` предоставляет позицию точки контакта в нескольких системах координат: `devicePosition` (координаты устройства), `canvasPosition` (координаты игрового виджета) и `localPosition` (локальные координаты компонента).
+
+Любой компонент, получивший `onLongPressStart`, позже получит либо `onLongPressEnd` (при успешном завершении), либо `onLongPressCancel` (при отмене). В промежутке также могут поступать обновления перемещения.
+
+Вызов `super.onLongPressStart(event)` устанавливает `isLongPressing` в `true`.
+
+### onLongPressMoveUpdate
+
+Срабатывает непрерывно, пока пользователь перемещает палец во время активного долгого нажатия. Это событие доставляется только компонентам, получившим начальный `onLongPressStart`.
+
+`LongPressMoveUpdateEvent` является `DisplacementEvent` и предоставляет межкадровое смещение (`delta`), подобно `DragUpdateEvent`. Это означает, что можно использовать `localDelta` для перемещения компонента вслед за указателем (корректно учитывается зум камеры и трансформации компонента). Событие также содержит `offsetFromOrigin` — полное смещение с начала жеста.
+
+### onLongPressEnd
+
+Срабатывает, когда пользователь поднимает указатель после долгого нажатия. `LongPressEndEvent` содержит финальную позицию и `velocity` (скорость) указателя в момент отпускания.
+
+Вызов `super.onLongPressEnd(event)` устанавливает `isLongPressing` в `false`.
+
+### onLongPressCancel
+
+Срабатывает, если жест прерывается до завершения (например, конкурирующим распознавателем жестов).
+
+Вызов `super.onLongPressCancel(event)` устанавливает `isLongPressing` в `false`.
+
+## Примеси
+
+### LongPressCallbacks
+
+Примесь `LongPressCallbacks` может быть добавлена к любому `Component`, чтобы этот компонент начал получать события долгого нажатия.
+
+Эта примесь добавляет в компонент методы `onLongPressStart`, `onLongPressMoveUpdate`, `onLongPressEnd` и `onLongPressCancel`. Переопределите их, чтобы реализовать нужное поведение.
+
+Компонент будет получать только те события долгого нажатия, которые начинаются *внутри* этого компонента, что определяется функцией `containsLocalPoint()`. Широко используемый класс `PositionComponent` предоставляет такую реализацию на основе своего свойства `size`.
+
+Примесь также предоставляет свойство `isLongPressing`, которое отслеживает, активно ли сейчас долгое нажатие на компоненте. Оно управляется автоматически, если вызывать `super` в `onLongPressStart`, `onLongPressEnd` и `onLongPressCancel`.
+
+```dart
+class LongPressSquare extends RectangleComponent with LongPressCallbacks {
+  @override
+  void onLongPressStart(LongPressStartEvent event) {
+    super.onLongPressStart(event);
+    paint.color = Colors.red;
+  }
+
+  @override
+  void onLongPressMoveUpdate(LongPressMoveUpdateEvent event) {
+    position += event.localDelta;
+  }
+
+  @override
+  void onLongPressEnd(LongPressEndEvent event) {
+    super.onLongPressEnd(event);
+    paint.color = Colors.blue;
+  }
+}
+```# Long Press Events
 
 **Long press events** occur when the user presses and holds a pointer (finger or mouse) on a
 component for a sustained period. This gesture is commonly used for context menus, drag-to-move
