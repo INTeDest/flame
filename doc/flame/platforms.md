@@ -1,41 +1,30 @@
-# Supported Platforms
+# Поддерживаемые платформы
 
-One of Flame's biggest advantages is that it inherits Flutter's cross-platform reach. A single
-codebase can produce games for phones, desktops, and the web. This section covers platform
-support details and shows how to deploy your finished game to popular hosting services.
+Поскольку Flame работает поверх Flutter, его поддерживаемые платформы зависят от тех платформ, которые поддерживаются Flutter.
 
-Since Flame runs on top of Flutter, its supported platforms depend on which platforms are
-supported by Flutter.
-
-At the moment, Flame supports web, mobile (Android and iOS) and desktop (Windows, macOS and Linux).
+На данный момент Flame поддерживает веб, мобильные устройства (Android и iOS) и десктоп (Windows, macOS и Linux).
 
 
-## Flutter channels
+## Каналы Flutter
 
-Flame keeps its support on the stable channel. The dev, beta and master channels should work,
-but we don't support them. This means that issues happening outside the stable channel are not
-a priority.
+Flame сохраняет поддержку на стабильном канале (stable). Каналы dev, beta и master должны работать, но мы их не поддерживаем. Это означает, что проблемы, возникающие вне стабильного канала, не являются приоритетными.
 
 
-## Deploy your game to GitHub Pages
+## Публикация игры на GitHub Pages
 
-One easy way to deploy your game online is to use [GitHub Pages](https://pages.github.com/).
-It is a cool feature from GitHub, by which you can easily host web content from your repository.
+Один из простых способов опубликовать игру онлайн — использовать [GitHub Pages](https://pages.github.com/). Это удобная функция GitHub, позволяющая легко размещать веб-контент из вашего репозитория.
 
-Here we will explain the easiest way to get your game hosted using GitHub pages.
+Здесь мы объясним самый простой способ размещения игры с использованием GitHub Pages.
 
-First, let's create the branch where your deployed files will live:
+Сначала создадим ветку, в которой будут находиться файлы для публикации:
 
 ```shell
 git checkout -b gh-pages
 ```
 
-This branch can be created from `main` or any other place, it doesn't matter much. After you push
-that branch go back to your `main` branch.
+Эта ветка может быть создана из `main` или любого другого места, это не имеет большого значения. После отправки этой ветки вернитесь в ветку `main`.
 
-Now you should add the [flutter-gh-pages](https://github.com/bluefireteam/flutter-gh-pages)
-action to your repository, you can do that by creating a file `gh-pages.yaml` under the folder
-`.github/workflows`.
+Теперь необходимо добавить GitHub Action [flutter-gh-pages](https://github.com/bluefireteam/flutter-gh-pages) в ваш репозиторий. Для этого создайте файл `gh-pages.yaml` в папке `.github/workflows`.
 
 ```yaml
 name: Gh-Pages
@@ -53,75 +42,63 @@ jobs:
       - uses: subosito/flutter-action@v2
       - uses: bluefireteam/flutter-gh-pages@v8
         with:
-          baseHref: /NAME_OF_YOUR_REPOSITORY/
+          baseHref: /ИМЯ_ВАШЕГО_РЕПОЗИТОРИЯ/
           webRenderer: canvaskit
 ```
 
-Be sure to change `NAME_OF_YOUR_REPOSITORY` to the name of your GitHub repository.
+Не забудьте заменить `ИМЯ_ВАШЕГО_РЕПОЗИТОРИЯ` на имя вашего репозитория на GitHub.
 
-Now, whenever you push something to the `main` branch, the action will run and update your
-deployed game.
+Теперь при каждом пуше в ветку `main` будет запускаться action и обновлять развернутую игру.
 
-The game should be available at a URL like this:
-`https://YOUR_GITHUB_USERNAME.github.io/NAME_OF_YOUR_REPOSITORY/`
-
-
-## Deploy your game to itch.io
-
-1. Create a web build, either from your IDE or by running `flutter build web`
-(If it complains about `Missing index.html` run `flutter create . --platforms=web`)
-2. Go into `index.html` and remove the line that says `<base href="/">`
-3. zip the `build/web` folder and upload to itch.io
-
-**Remember that it shouldn't be the `web` directory in your project's root, but in `build/web`!**
-
-If you are submitting your game to a game jam, remember to make it public and submit it on the
-game jam page too (many get confused by this).
-
-Further instructions can be found on
-[itch.io](https://itch.io/docs/creators/html5#getting-started/zip-file).
+Игра будет доступна по адресу:
+`https://ВАШ_ЛОГИН_GITHUB.github.io/ИМЯ_ВАШЕГО_РЕПОЗИТОРИЯ/`
 
 
-## Deploy your game to Cloudflare Pages
+## Публикация игры на itch.io
+
+1. Создайте веб-сборку: либо из вашей IDE, либо выполнив команду `flutter build web`
+(если возникает ошибка `Missing index.html`, выполните `flutter create . --platforms=web`)
+2. Откройте `index.html` и удалите строку `<base href="/">`
+3. Запакуйте папку `build/web` в zip-архив и загрузите на itch.io
+
+**Помните, что загружать нужно не папку `web` в корне проекта, а `build/web`!**
+
+Если вы отправляете игру на игровой джем (game jam), не забудьте сделать её публичной и подать заявку на странице джема (многие об этом забывают).
+
+Дополнительные инструкции можно найти на [itch.io](https://itch.io/docs/creators/html5#getting-started/zip-file).
+
+
+## Публикация игры на Cloudflare Pages
 
 ```{note}
-Automated deployment to Cloudflare Pages is only available for GitHub and GitLab
-repositories.
+Автоматическая публикация на Cloudflare Pages доступна только для репозиториев GitHub и GitLab.
 ```
 
-[Cloudflare pages](https://pages.cloudflare.com/) is another interesting option to host your
-Flame game online.
+[Cloudflare Pages](https://pages.cloudflare.com/) — ещё один интересный вариант для размещения игры Flame онлайн.
 
-Setting up an automated deployment on it is super simple and can be achieved in a few steps:
+Настройка автоматического развертывания на нём очень проста и выполняется в несколько шагов:
 
-First, create your account on Cloudflare, and once you are logged in, use the `+ Add` button on
-the top right corner to create your page project.
+Сначала создайте учётную запись на Cloudflare. После входа используйте кнопку `+ Add` в правом верхнем углу, чтобы создать проект Pages.
 
-![Cloudflare add menu screenshot](../images/add_button.png)
+![Скриншот меню добавления Cloudflare](../images/add_button.png)
 
-Next follow the steps to connect your repository, you can choose between GitHub and GitLab.
+Далее следуйте инструкциям для подключения репозитория. Можно выбрать между GitHub и GitLab.
 
-You should then be presented with a screen to configure your project name, which should be
-pre-filled with the name of your repository, and the production branch, which will also
-be pre-filled with `main`.
+Затем вы увидите экран настройки проекта. Имя проекта будет предварительно заполнено именем репозитория, а производственная ветка (production branch) — значением `main`.
 
-Scrolling down you will see the build settings panel, which should look like this:
+Прокрутив вниз, вы увидите панель настроек сборки, которая выглядит примерно так:
 
-![Cloudflare build settings screenshot](../images/build_form.png)
+![Скриншот настроек сборки Cloudflare](../images/build_form.png)
 
-Leave the `Framework preset` as `None` since Flutter is not supported out of the box.
+Оставьте `Framework preset` как `None`, так как Flutter не поддерживается «из коробки».
 
-Then on the `Build command` field, enter the following command:
+В поле `Build command` введите следующую команду:
 
 ```shell
-if cd flutter; then git pull && cd ..;else
-git clone https://github.com/flutter/flutter.git; fi &&
-../flutter/bin/flutter doctor && ../flutter/bin/flutter clean &&
-../flutter/bin/flutter build web --release
+if cd flutter; then git pull && cd ..;else git clone https://github.com/flutter/flutter.git; fi && ../flutter/bin/flutter doctor && ../flutter/bin/flutter clean && ../flutter/bin/flutter build web --release
 ```
 
-It should be entered as a single line, but below you can see it split into multiple lines for
-better readability:
+Она должна быть введена одной строкой, но ниже для удобства чтения она разбита на несколько строк:
 
 ```shell
 if cd flutter; then
@@ -134,31 +111,19 @@ fi
 ../flutter/bin/flutter build web --release
 ```
 
-Some people might prefer to create a bash script in the root of their repository with the above
-commands and use it instead of entering the commands directly in the field, so it is up to you.
+Некоторые предпочитают создать bash-скрипт в корне репозитория с указанными командами и использовать его вместо прямого ввода. Выбор за вами.
 
-Set the Build output directory to `build/web`.
+Установите Build output directory в `build/web`.
 
-If needed use the advanced options to set environment variables.
+При необходимости используйте дополнительные параметры для установки переменных окружения.
 
-Finally, click on the `Save and Deploy` button to start the deployment and that is it. You should
-have automation ready to deploy your game to Cloudflare Pages every time you push to your
-repository.
+Наконец, нажмите кнопку `Save and Deploy`, чтобы начать развертывание. На этом всё: автоматизация готова, и ваша игра будет публиковаться на Cloudflare Pages при каждом пуше в репозиторий.
 
 
-### Web support
+### Поддержка веб-платформы
 
-When using Flame on the web some methods may not work. For example `Flame.device.setOrientation` and
-`Flame.device.fullScreen` won't work on web, they can be called, but nothing will happen.
+При использовании Flame в вебе некоторые методы могут не работать. Например, `Flame.device.setOrientation` и `Flame.device.fullScreen` не работают в вебе: их можно вызвать, но ничего не произойдёт.
 
-Another example: pre-caching audio using the `flame_audio` package also doesn't work due to
-Audioplayers not supporting it on web. This can be worked around by using the `http` package,
-and requesting a get to the audio file, that will make the browser cache the file producing the
-same effect as on mobile.
+Другой пример: предварительное кеширование аудио с помощью пакета `flame_audio` также не работает, поскольку Audioplayers не поддерживает это в вебе. Это можно обойти, используя пакет `http` и выполнив GET-запрос к аудиофайлу; это заставит браузер кешировать файл, создавая тот же эффект, что и на мобильных устройствах.
 
-If you want to create instances of `ui.Image` on the web you can use our
-`Flame.images.decodeImageFromPixels` method. This wraps the `decodeImageFromPixels` from the `ui`
-library, but with support for the web platform. If the `runAsWeb` argument is set to `true` (by
-default it is set to `kIsWeb`) it will decode the image using an internal image method. When the
-`runAsWeb` is `false` it will use the `decodeImageFromPixels`, which is currently not supported on
-the web.
+Если вам нужно создавать экземпляры `ui.Image` в вебе, используйте метод `Flame.images.decodeImageFromPixels`. Он оборачивает `decodeImageFromPixels` из библиотеки `ui`, но с поддержкой веб-платформы. Если аргумент `runAsWeb` установлен в `true` (по умолчанию равен `kIsWeb`), изображение будет декодировано с помощью внутреннего метода для веба. При `runAsWeb` равном `false` используется `decodeImageFromPixels`, который в вебе в настоящее время не поддерживается.
