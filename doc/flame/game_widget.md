@@ -1,4 +1,63 @@
-# Game Widget
+# GameWidget
+
+`GameWidget` — это мост между Flutter и Flame. Поскольку игры Flame сами по себе не являются виджетами Flutter, `GameWidget` оборачивает экземпляр `Game` и помещает его в дерево виджетов Flutter, как и любой другой [виджет](https://docs.flutter.dev/get-started/fundamentals/widgets). Это позволяет сочетать полноэкранную игру с элементами пользовательского интерфейса Flutter (панели навигации, оверлеи, диалоговые окна) или встраивать игру лишь как часть макета вашего приложения.
+
+```{dartdoc}
+:package: flame
+:symbol: GameWidget
+:file: src/game/game_widget/game_widget.dart
+
+[ClipRect]: https://api.flutter.dev/flutter/widgets/ClipRect-class.html
+[FocusNode]: https://api.flutter.dev/flutter/widgets/FocusNode-class.html
+[RepaintBoundary]: https://api.flutter.dev/flutter/widgets/RepaintBoundary-class.html
+```
+
+
+## Поведение при проверке попадания (Hit Test Behavior)
+
+Аргумент `behavior` управляет тем, как `GameWidget` участвует в проверке попаданий (hit testing) Flutter. Он определяет, будут ли события указателя (касания, перетаскивания и т.д.) поглощаться игрой или пропускаться к виджетам, расположенным ниже в дереве виджетов.
+
+Существует три возможных значения из `HitTestBehavior` Flutter:
+
+- **`HitTestBehavior.opaque`** (по умолчанию): Игра поглощает все события указателя на всей своей поверхности, не позволяя виджетам позади получать их. Это классическое поведение, при котором игра действует как сплошной слой.
+
+- **`HitTestBehavior.deferToChild`**: Игра перехватывает события только в тех позициях, где существует компонент с обратными вызовами событий (например, `TapCallbacks`). События в позициях без интерактивных компонентов проходят к виджетам позади `GameWidget`. Это полезно, когда игра накладывается поверх пользовательского интерфейса Flutter, и вы хотите, чтобы нижележащие виджеты оставались интерактивными в областях, которые игре не нужно обрабатывать.
+
+- **`HitTestBehavior.translucent`**: Игра получает события там, где у неё есть компоненты, обрабатывающие события, но всегда также разрешает проверку попадания для виджетов позади. И игра, и виджеты позади могут получить одно и то же событие.
+
+
+### Пропуск касаний
+
+Распространённым сценарием является размещение `GameWidget` поверх других виджетов Flutter в `Stack`. По умолчанию игра блокирует любое взаимодействие с нижележащими виджетами. Чтобы касания проходили к этим виджетам, установите `behavior` в `HitTestBehavior.deferToChild`:
+
+```dart
+Widget build(BuildContext context) {
+  return Stack(
+    children: [
+      // Виджеты Flutter снизу
+      Center(
+        child: ElevatedButton(
+          onPressed: () => print('Button tapped!'),
+          child: const Text('Tap me'),
+        ),
+      ),
+      // Игра сверху, пропускающая касания
+      Positioned.fill(
+        child: GameWidget(
+          game: MyGame(),
+          behavior: HitTestBehavior.deferToChild,
+        ),
+      ),
+    ],
+  );
+}
+```
+
+В такой конфигурации касание области без интерактивных игровых компонентов достигнет `ElevatedButton` позади игры. Касание игрового компонента, использующего `TapCallbacks`, будет обработано игрой.
+
+```{note}
+При использовании `deferToChild` или `translucent` `FlameGame` определяет, есть ли в данной позиции интерактивный компонент, обходя дерево компонентов с помощью `componentsAtPoint`. Игры, напрямую расширяющие низкоуровневый класс `Game`, по умолчанию сообщают о попадании по всей своей поверхности; переопределите `containsEventHandlerAt`, чтобы изменить это поведение.
+```# Game Widget
 
 The `GameWidget` is the bridge between Flutter and Flame. Since Flame games are not Flutter widgets
 by themselves, the `GameWidget` wraps a `Game` instance and places it into the Flutter widget tree,
