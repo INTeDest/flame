@@ -11,7 +11,7 @@ graph TD
         ParticleComponent
         SpriteBatchComponent
     ")
-    Effects("Effects<br/>(See the effects section)")
+    Effects("Эффекты<br/>(См. раздел эффектов)")
     Game(Game)
     FlameGame(FlameGame)
     PositionComponent(PositionComponent)
