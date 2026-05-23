@@ -1,11 +1,8 @@
-# Effect controllers
+# Контроллеры эффектов
 
-An `EffectController` is an object that describes how the effect should evolve over time. If you
-think of the initial value of the effect as 0% progress, and the final value as 100% progress, then
-the job of the effect controller is to map from the "physical" time, measured in seconds, into the
-"logical" time, which changes from 0 to 1.
+`EffectController` — это объект, описывающий, как эффект должен изменяться с течением времени. Если представить начальное значение эффекта как прогресс 0%, а конечное — как 100%, то задача контроллера эффекта состоит в отображении «физического» времени, измеряемого в секундах, в «логическое», которое меняется от 0 до 1.
 
-There are multiple effect controllers provided by the Flame framework:
+Фреймворк Flame предоставляет несколько контроллеров эффектов:
 
 - [`EffectController`](#effectcontroller)
 - [`LinearEffectController`](#lineareffectcontroller)
@@ -26,8 +23,7 @@ There are multiple effect controllers provided by the Flame framework:
 
 ## `EffectController`
 
-The base `EffectController` class provides a factory constructor capable of creating a variety of
-common controllers. The syntax of the constructor is the following:
+Базовый класс `EffectController` предоставляет фабричный конструктор, способный создавать множество типовых контроллеров. Синтаксис конструктора следующий:
 
 ```dart
 EffectController({
@@ -46,80 +42,48 @@ EffectController({
 });
 ```
 
-- *`duration`*: the length of the main part of the effect, i.e. how long it should take to go
-  from 0 to 100%. This parameter cannot be negative, but can be zero. If this is the only parameter
-  specified then the effect will grow linearly over the `duration` seconds.
+- *`duration`*: длительность основной части эффекта, т.е. сколько времени потребуется, чтобы перейти от 0 до 100%. Этот параметр не может быть отрицательным, но может быть равен нулю. Если указан только этот параметр, эффект будет линейно расти в течение `duration` секунд.
 
-- *`curve`*: if given, creates a non-linear effect that grows from 0 to 100% according to the
-  provided [curve](https://api.flutter.dev/flutter/animation/Curves-class.html).
+- *`curve`*: если задана, создаёт нелинейный эффект, который растёт от 0 до 100% согласно предоставленной [кривой](https://api.flutter.dev/flutter/animation/Curves-class.html).
 
-- *`reverseDuration`*: if provided, adds an additional step to the controller: after the effect
-  has grown from 0 to 100% over the `duration` seconds, it will then go backwards from 100% to 0
-  over the `reverseDuration` seconds. In addition, the effect will complete at progress level of 0
-  (normally the effect completes at progress 1).
+- *`reverseDuration`*: если указана, добавляет дополнительный шаг в контроллер: после того как эффект вырос от 0 до 100% за `duration` секунд, он пойдёт в обратном направлении от 100% до 0 за `reverseDuration` секунд. Кроме того, эффект завершится на уровне прогресса 0 (обычно эффект завершается при прогрессе 1).
 
-- *`reverseCurve`*: the curve to be used during the "reverse" step of the effect. If not given,
-  this will default to `curve.flipped`.
+- *`reverseCurve`*: кривая, используемая на «обратном» шаге эффекта. Если не задана, будет использована `curve.flipped`.
 
-- *`alternate`*: setting this to true is equivalent to specifying the `reverseDuration` equal
-  to the `duration`. If the `reverseDuration` is already set, this flag has no effect.
+- *`alternate`*: установка в true эквивалентна указанию `reverseDuration`, равного `duration`. Если `reverseDuration` уже задана, этот флаг не имеет эффекта.
 
-- *`atMaxDuration`*: if non-zero, this inserts a pause after the effect reaches its max
-  progress and before the reverse stage. During this time the effect is kept at 100% progress. If
-  there is no reverse stage, then this will simply be a pause before the effect is marked as
-  completed.
+- *`atMaxDuration`*: если не ноль, вставляет паузу после достижения эффектом максимального прогресса и перед обратным этапом. В течение этого времени прогресс эффекта удерживается на 100%. Если обратного этапа нет, то это будет просто пауза перед тем, как эффект будет отмечен завершённым.
 
-- *`atMinDuration`*: if non-zero, this inserts a pause after the reaches its lowest progress
-  (0) at the end of the reverse stage. During this time, the effect's progress is at 0%. If there
-  is no reverse stage, then this pause will still be inserted after the "at-max" pause if it's
-  present, or after the forward stage otherwise. In addition, the effect will now complete at
-  progress level of 0.
+- *`atMinDuration`*: если не ноль, вставляет паузу после достижения эффектом наименьшего прогресса (0) в конце обратного этапа. В течение этого времени прогресс эффекта равен 0%. Если обратного этапа нет, то эта пауза всё равно будет вставлена после «паузы на максимуме», если она присутствует, или после прямого этапа в противном случае. Кроме того, эффект теперь завершится на уровне прогресса 0.
 
-- *`repeatCount`*: if greater than one, it will cause the effect to repeat itself the prescribed
-  number of times. Each iteration will consists of the forward stage, pause at max, reverse stage,
-  then pause at min (skipping those that were not specified).
+- *`repeatCount`*: если больше единицы, заставит эффект повторяться указанное число раз. Каждая итерация будет состоять из прямого этапа, паузы на максимуме, обратного этапа, затем паузы на минимуме (пропуская те, что не были заданы).
 
-- *`infinite`*: if true, the effect will repeat infinitely and never reach completion. This is
-  equivalent to as if `repeatCount` was set to infinity.
+- *`infinite`*: если true, эффект будет повторяться бесконечно и никогда не достигнет завершения. Это эквивалентно установке `repeatCount` в бесконечность.
 
-- *`startDelay`*: an additional wait time inserted before the beginning of the effect. This
-  wait time is executed only once, even if the effect is repeating. During this time the effect's
-  `.started` property returns false. The effect's `onStart()` callback will be executed at the end
-  of this waiting period.
+- *`startDelay`*: дополнительное время ожидания, вставляемое перед началом эффекта. Это время ожидания выполняется только один раз, даже если эффект повторяется. В течение этого времени свойство `.started` эффекта возвращает false. Обратный вызов `onStart()` эффекта будет выполнен в конце этого периода ожидания.
 
-  Using this parameter is the simplest way to create a chain of effects that execute one after
-  another (or with an overlap).
+  Использование этого параметра — простейший способ создать цепочку эффектов, выполняющихся один за другим (или с перекрытием).
 
-- *`onMax`*: callback function which will be invoked right after reaching its max progress and
-  before the optional pause and reverse stage.
+- *`onMax`*: функция обратного вызова, которая будет вызвана сразу после достижения максимального прогресса и перед опциональной паузой и обратным этапом.
 
-- *`onMin`*: callback function which will be invoked right after reaching its lowest progress
-  at the end of the reverse stage and before the optional pause and forward stage.
+- *`onMin`*: функция обратного вызова, которая будет вызвана сразу после достижения наименьшего прогресса в конце обратного этапа и перед опциональной паузой и прямым этапом.
 
-The effect controller returned by this factory constructor will be composited of multiple simpler
-effect controllers described further below. If this constructor proves to be too limited for your
-needs, you can always create your own combination from the same building blocks.
+Контроллер эффекта, возвращаемый этим фабричным конструктором, будет состоять из нескольких более простых контроллеров, описанных ниже. Если этот конструктор окажется слишком ограниченным для ваших нужд, вы всегда можете создать собственную комбинацию из тех же строительных блоков.
 
-In addition to the factory constructor, the `EffectController` class defines a number of properties
-common for all effect controllers. These properties are:
+В дополнение к фабричному конструктору, класс `EffectController` определяет ряд свойств, общих для всех контроллеров эффектов. Эти свойства:
 
-- `.started`: true if the effect has already started. For most effect controllers this property
-  is always true. The only exception is the `DelayedEffectController` which returns false while the
-  effect is in the waiting stage.
+- `.started`: true, если эффект уже начался. Для большинства контроллеров это свойство всегда true. Единственное исключение — `DelayedEffectController`, который возвращает false, пока эффект находится в стадии ожидания.
 
-- `.completed`: becomes true when the effect controller finishes execution.
+- `.completed`: становится true, когда контроллер эффекта завершает выполнение.
 
-- `.progress`: current value of the effect controller, a floating-point value from 0 to 1. This
-  variable is the main "output" value of an effect controller.
+- `.progress`: текущее значение контроллера, число с плавающей точкой от 0 до 1. Эта переменная — основное «выходное» значение контроллера эффекта.
 
-- `.duration`: total duration of the effect, or `null` if the duration cannot be determined (for
-  example if the duration is random or infinite).
+- `.duration`: общая длительность эффекта или `null`, если длительность невозможно определить (например, если длительность случайна или бесконечна).
 
 
 ## `LinearEffectController`
 
-This is the simplest effect controller that grows linearly from 0 to 1 over the specified
-`duration`:
+Простейший контроллер, который линейно растёт от 0 до 1 за указанную `длительность`:
 
 ```dart
 final controller = LinearEffectController(3);
@@ -128,8 +92,7 @@ final controller = LinearEffectController(3);
 
 ## `ReverseLinearEffectController`
 
-Similar to the `LinearEffectController`, but it goes in the opposite direction and grows linearly
-from 1 to 0 over the specified duration:
+Похож на `LinearEffectController`, но движется в противоположном направлении и линейно убывает от 1 до 0 за указанную длительность:
 
 ```dart
 final controller = ReverseLinearEffectController(1);
@@ -138,8 +101,7 @@ final controller = ReverseLinearEffectController(1);
 
 ## `CurvedEffectController`
 
-This effect controller grows non-linearly from 0 to 1 over the specified `duration` and following
-the provided `curve`:
+Этот контроллер нелинейно растёт от 0 до 1 за указанную `длительность`, следуя заданной `кривой`:
 
 ```dart
 final controller = CurvedEffectController(0.5, Curves.easeOut);
@@ -148,8 +110,7 @@ final controller = CurvedEffectController(0.5, Curves.easeOut);
 
 ## `ReverseCurvedEffectController`
 
-Similar to the `CurvedEffectController`, but the controller grows down from 1 to 0 following the
-provided `curve`:
+Похож на `CurvedEffectController`, но убывает от 1 до 0, следуя заданной `кривой`:
 
 ```dart
 final controller = ReverseCurvedEffectController(0.5, Curves.bounceInOut);
@@ -158,8 +119,7 @@ final controller = ReverseCurvedEffectController(0.5, Curves.bounceInOut);
 
 ## `PauseEffectController`
 
-This effect controller keeps the progress at a constant value for the specified time duration.
-Typically, the `progress` would be either 0 or 1:
+Удерживает прогресс на постоянном значении в течение указанного времени. Обычно `progress` равен 0 или 1:
 
 ```dart
 final controller = PauseEffectController(1.5, progress: 0);
@@ -168,20 +128,18 @@ final controller = PauseEffectController(1.5, progress: 0);
 
 ## `RepeatedEffectController`
 
-This is a composite effect controller. It takes another effect controller as a child, and repeats
-it multiple times, resetting before the start of each next cycle.
+Составной контроллер. Он принимает другой контроллер в качестве дочернего и повторяет его несколько раз, сбрасывая перед началом каждого следующего цикла.
 
 ```dart
 final controller = RepeatedEffectController(LinearEffectController(1), 10);
 ```
 
-The child effect controller cannot be infinite. If the child is random, then it will be
-re-initialized with new random values on each iteration.
+Дочерний контроллер не может быть бесконечным. Если дочерний контроллер случайный, он будет переинициализирован с новыми случайными значениями на каждой итерации.
 
 
 ## `InfiniteEffectController`
 
-Similar to the `RepeatedEffectController`, but repeats its child controller indefinitely.
+Похож на `RepeatedEffectController`, но повторяет дочерний контроллер бесконечно.
 
 ```dart
 final controller = InfiniteEffectController(LinearEffectController(1));
@@ -190,8 +148,7 @@ final controller = InfiniteEffectController(LinearEffectController(1));
 
 ## `SequenceEffectController`
 
-Executes a sequence of effect controllers, one after another. The list of controllers cannot be
-empty.
+Выполняет последовательность контроллеров один за другим. Список контроллеров не может быть пустым.
 
 ```dart
 final controller = SequenceEffectController([
@@ -204,13 +161,9 @@ final controller = SequenceEffectController([
 
 ## `SpeedEffectController`
 
-Alters the duration of its child effect controller so that the effect proceeds at the predefined
-speed. The initial duration of the child EffectController is irrelevant. The child controller must
-be the subclass of `DurationEffectController`.
+Изменяет длительность дочернего контроллера так, чтобы эффект протекал с заданной скоростью. Исходная длительность дочернего EffectController не важна. Дочерний контроллер должен быть подклассом `DurationEffectController`.
 
-The `SpeedEffectController` can only be applied to effects for which the notion of speed is
-well-defined. Such effects must implement the `MeasurableEffect` interface. For example, the
-following effects qualify:
+`SpeedEffectController` может применяться только к эффектам, для которых понятие скорости чётко определено. Такие эффекты должны реализовывать интерфейс `MeasurableEffect`. Например, к ним относятся:
 
 - [`MoveByEffect`](move_effects.md#movebyeffect)
 - [`MoveToEffect`](move_effects.md#movetoeffect)
@@ -218,23 +171,19 @@ following effects qualify:
 - [`RotateEffect.by`](rotate_effects.md#rotateeffectby)
 - [`RotateEffect.to`](rotate_effects.md#rotateeffectto)
 
-The parameter `speed` is in units per second, where the notion of a "unit" depends on the target
-effect. For example, for move effects, they refer to the distance traveled; for rotation effects
-the units are radians.
+Параметр `speed` задаётся в единицах в секунду, причём понятие «единицы» зависит от целевого эффекта. Например, для эффектов перемещения это пройденное расстояние; для эффектов вращения — радианы.
 
 ```dart
 final speedController =
     SpeedEffectController(LinearEffectController(0), speed: 1);
 final controller =
-    EffectController(speed: 1); // same as speedController
+    EffectController(speed: 1); // то же, что и speedController
 ```
 
 
 ## `DelayedEffectController`
 
-Effect controller that executes its child controller after the prescribed `delay`. While the
-controller is executing the "delay" stage, the effect will be considered "not started", i.e. its
-`.started` property will be returning `false`.
+Контроллер, который выполняет свой дочерний контроллер после заданной `задержки`. Пока контроллер находится на стадии «задержки», эффект считается «не начавшимся», т.е. его свойство `.started` возвращает `false`.
 
 ```dart
 final controller = DelayedEffectController(LinearEffectController(1), delay: 5);
@@ -243,8 +192,7 @@ final controller = DelayedEffectController(LinearEffectController(1), delay: 5);
 
 ## `NoiseEffectController`
 
-This effect controller exhibits noisy behavior, i.e. it oscillates randomly around zero. Such effect
-controller can be used to implement a variety of shake effects.
+Этот контроллер проявляет шумовое поведение, т.е. случайно колеблется около нуля. Такой контроллер можно использовать для реализации разнообразных эффектов дрожания.
 
 ```dart
 final controller = NoiseEffectController(duration: 0.6, frequency: 10);
@@ -253,28 +201,22 @@ final controller = NoiseEffectController(duration: 0.6, frequency: 10);
 
 ## `RandomEffectController`
 
-This controller wraps another controller and makes its duration random. The actual value for the
-duration is re-generated upon each reset, which makes this controller particularly useful within
-repeated contexts, such as [](#repeatedeffectcontroller) or [](#infiniteeffectcontroller).
+Этот контроллер оборачивает другой контроллер и делает его длительность случайной. Фактическое значение длительности генерируется заново при каждом сбросе, что делает этот контроллер особенно полезным в повторяющихся контекстах, таких как [](#repeatedeffectcontroller) или [](#infiniteeffectcontroller).
 
 ```dart
 final controller = RandomEffectController.uniform(
-  LinearEffectController(0),  // duration here is irrelevant
+  LinearEffectController(0),  // длительность здесь не важна
   min: 0.5,
   max: 1.5,
 );
 ```
 
-The user has the ability to control which `Random` source to use, as well as the exact distribution
-of the produced random durations. Two distributions, `.uniform` and `.exponential`, are included,
-any other can be implemented by the user.
+Пользователь может выбирать, какой источник `Random` использовать, а также точное распределение генерируемых случайных длительностей. Предусмотрены два распределения: `.uniform` и `.exponential`, любое другое может быть реализовано пользователем.
 
 
 ## `SineEffectController`
 
-An effect controller that represents a single period of the sine function. Use this to create
-natural-looking harmonic oscillations. Two perpendicular move effects governed by
-`SineEffectControllers` with different periods, will create a [Lissajous curve].
+Контроллер, представляющий один период синусоиды. Используйте его для создания естественно выглядящих гармонических колебаний. Два перпендикулярных эффекта перемещения, управляемых `SineEffectControllers` с разными периодами, создадут [кривую Лиссажу].
 
 ```dart
 final controller = SineEffectController(period: 1);
@@ -283,13 +225,10 @@ final controller = SineEffectController(period: 1);
 
 ## `ZigzagEffectController`
 
-Simple alternating effect controller. Over the course of one `period`, this controller will proceed
-linearly from 0 to 1, then to -1, and then back to 0. Use this for oscillating effects where the
-starting position should be the center of the oscillations, rather than the extreme (as provided
-by the standard alternating `EffectController`).
+Простой знакопеременный контроллер. В течение одного `period` этот контроллер будет линейно изменяться от 0 до 1, затем до -1 и обратно к 0. Используйте его для колебательных эффектов, где начальное положение должно быть центром колебаний, а не крайним значением (как это обеспечивается стандартным знакопеременным `EffectController`).
 
 ```dart
 final controller = ZigzagEffectController(period: 2);
 ```
 
-[Lissajous curve]: https://en.wikipedia.org/wiki/Lissajous_curve
+[кривую Лиссажу]: https://en.wikipedia.org/wiki/Lissajous_curve
