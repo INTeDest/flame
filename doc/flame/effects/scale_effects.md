@@ -1,25 +1,19 @@
-# Scale Effects
+# Эффекты масштабирования
 
-Scale effects are used to change the scale of a component over time. They can be used to make a
-component grow, shrink, or change its scale in a specific direction. The scale is specified as a
-`Vector2` value, where each x represents the width factor and y represents the height factor. The
-effects can be applied to any component that has a scale property, such as the `PositionComponent`.
-The difference between size effects and scale effects is that size only changes the size of the
-target component, while scale changes the "size" of all children too.
+Эффекты масштабирования используются для изменения масштаба компонента с течением времени. Их можно применять, чтобы заставить компонент расти, сжиматься или изменять масштаб в определённом направлении. Масштаб задаётся значением `Vector2`, где x представляет коэффициент ширины, а y — коэффициент высоты. Эффекты можно применять к любому компоненту со свойством масштаба, например к `PositionComponent`. Разница между эффектами размера и масштабирования в том, что размер изменяет только размер целевого компонента, тогда как масштаб изменяет «размер» также всех его дочерних элементов.
 
 
 ## `ScaleEffect.by`
 
-This effect will change the target's scale by the specified amount. For example, this will cause
-the component to grow 50% larger:
+Этот эффект изменяет масштаб цели на указанную величину. Например, следующий код заставит компонент вырасти на 50%:
 
- ```{flutter-app}
- :sources: ../flame/examples
- :page: scale_by_effect
- :show: widget code infobox
- :width: 180
- :height: 160
- ```
+```{flutter-app}
+:sources: ../flame/examples
+:page: scale_by_effect
+:show: widget code infobox
+:width: 180
+:height: 160
+```
 
 ```dart
 final effect = ScaleEffect.by(
@@ -31,15 +25,15 @@ final effect = ScaleEffect.by(
 
 ## `ScaleEffect.to`
 
-This effect works similar to `ScaleEffect.by`, but sets the absolute value of the target's scale.
+Этот эффект работает аналогично `ScaleEffect.by`, но устанавливает абсолютное значение масштаба цели.
 
- ```{flutter-app}
- :sources: ../flame/examples
- :page: scale_to_effect
- :show: widget code infobox
- :width: 180
- :height: 160
- ```
+```{flutter-app}
+:sources: ../flame/examples
+:page: scale_to_effect
+:show: widget code infobox
+:width: 180
+:height: 160
+```
 
 ```dart
 final effect = ScaleEffect.to(
