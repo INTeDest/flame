@@ -1,53 +1,43 @@
-# Getting Started
+# Начало работы
 
 
-## About Flame
+## О Flame
 
-Flame is a modular Flutter game engine that provides a complete set of out-of-the-way solutions for
-games. It takes advantage of the powerful infrastructure provided by Flutter but simplifies the code
-you need to build your projects.
+Flame — это модульный игровой движок на Flutter, предоставляющий полный набор готовых решений для игр. Он использует мощную инфраструктуру Flutter, но упрощает код, необходимый для создания ваших проектов.
 
-It provides you with a simple yet effective game loop implementation, and the necessary
-functionalities that you might need in a game. For instance; input, images, sprites, sprite sheets,
-animations, collision detection, and a component system that we call Flame Component System (FCS for
-short).
+Движок предлагает простую, но эффективную реализацию игрового цикла и все необходимые функции, которые могут понадобиться в игре: ввод, изображения, спрайты, спрайт-листы, анимации, обнаружение столкновений и компонентную систему, которую мы называем Flame Component System (сокращённо FCS).
 
-We also provide stand-alone packages that extend the Flame functionality which can be found in the
-[Bridge Packages](bridge_packages/bridge_packages.md) section.
+Мы также предоставляем отдельные пакеты, расширяющие функциональность Flame, их можно найти в разделе [Bridge Packages](bridge_packages/bridge_packages.md).
 
-You can pick and choose whichever parts you want, as they are all independent and modular.
+Вы можете выбирать и использовать только те части, которые нужны, поскольку все они независимы и модульны.
 
-The engine and its ecosystem are constantly being improved by the community, so please feel free to
-reach out, open issues and PRs as well as make suggestions.
+Движок и его экосистема постоянно улучшаются сообществом, поэтому не стесняйтесь обращаться, открывать issues и PR, а также вносить предложения.
 
-Give us a star if you want to help give the engine exposure and grow the community. :)
+Поставьте нам звёздочку, если хотите помочь движку стать известнее и развить сообщество. :)
 
 
-## Installation
+## Установка
 
-Add the `flame` package as a dependency in your `pubspec.yaml` by running the following command:
+Добавьте пакет `flame` в зависимости вашего `pubspec.yaml`, выполнив следующую команду:
 
 ```console
 flutter pub add flame
 ```
 
-The latest version can be found on [pub.dev](https://pub.dev/packages/flame/install).
+Последнюю версию можно найти на [pub.dev](https://pub.dev/packages/flame/install).
 
-then run `flutter pub get` and you are ready to start using it!
+Затем выполните `flutter pub get`, и вы готовы начать использовать его!
 
 
-## Getting started
+## Начало работы
 
-There is a set of tutorials that you can follow to get started in the
-[tutorials folder](https://github.com/flame-engine/flame/tree/main/doc/tutorials).
+В папке [tutorials](https://github.com/flame-engine/flame/tree/main/doc/tutorials) есть несколько руководств, которые помогут вам начать.
 
-Simple examples for all features can be found in the
-[examples folder](https://github.com/flame-engine/flame/tree/main/examples).
+Простые примеры для всех возможностей можно найти в папке [examples](https://github.com/flame-engine/flame/tree/main/examples).
 
-To run Flame you need use the `GameWidget`, which is just another widget that can live anywhere in
-your widget tree. You can use it as the root widget of your app, or as a child of another widget.
+Для запуска Flame используйте `GameWidget` — это обычный виджет, который может находиться в любом месте вашего дерева виджетов. Вы можете использовать его как корневой виджет приложения или как дочерний элемент другого виджета.
 
-Here is a simple example of how to use the `GameWidget`:
+Вот простой пример использования `GameWidget`:
 
 ```dart
 import 'package:flame/game.dart';
@@ -62,15 +52,11 @@ void main() {
 }
 ```
 
-In Flame we provide a concept called the Flame Component System (FCS), which is a way to organize
-your game objects in a way that makes it easy to manage them. You can read more about it in the
-[Components](flame/components/components.md) section.
+Во Flame мы предлагаем концепцию, называемую Flame Component System (FCS), — это способ организации игровых объектов, упрощающий управление ими. Подробнее об этом можно прочитать в разделе [Components](flame/components/components.md).
 
-When you want to start a new game you either have to extend the `FlameGame` class or the `World`
-class. The `FlameGame` is the root of your game and is responsible for managing the game loop and
-the components. The `World` class is a component that can be used to create a world in your game.
+Когда вы начинаете новую игру, вам нужно либо расширить класс `FlameGame`, либо класс `World`. `FlameGame` — это корень вашей игры, отвечающий за игровой цикл и компоненты. Класс `World` — это компонент, который можно использовать для создания игрового мира.
 
-So to create a simple game you can do something like this:
+Итак, для создания простой игры можно сделать что-то подобное:
 
 ```dart
 import 'package:flame/game.dart';
@@ -93,17 +79,11 @@ class MyWorld extends World {
 }
 ```
 
-As you can see, we have created a `MyWorld` class that extends the `World` class. We have overridden
-the `onLoad` method to add a `Player` component (which doesn't exist yet) to the world. In the
-`FlameGame` class we by default have a `camera` that is watching the world, and by default it is
-looking at the (0, 0) position of the world in the center of the screen, to learn more about the
-camera and the world you can read the [Camera Component](flame/camera.md) section.
+Как видите, мы создали класс `MyWorld`, расширяющий `World`. Мы переопределили метод `onLoad`, чтобы добавить в мир компонент `Player` (которого пока не существует). В классе `FlameGame` по умолчанию есть камера, которая наблюдает за миром, и по умолчанию она смотрит на точку (0, 0) мира в центре экрана. Чтобы узнать больше о камере и мире, прочитайте раздел [Camera Component](flame/camera.md).
 
-The `Player` component can be whatever type of component that you want, to get started we recommend
-to use the `SpriteComponent` class, which is a component that can render a sprite (image) on the
-screen.
+Компонент `Player` может быть любым нужным вам типом компонента. Для начала мы рекомендуем использовать класс `SpriteComponent` — компонент, который может отображать спрайт (изображение) на экране.
 
-For example something like this:
+Например, так:
 
 ```dart
 import 'package:flame/components.dart';
@@ -121,24 +101,11 @@ class Player extends SpriteComponent {
 }
 ```
 
-In this example, we have created a `Player` class that extends the `SpriteComponent` class. We have
-overridden the `onLoad` method to set the sprite of the component to a sprite that we load from an
-image file called `player.png`. The image has to be in the `assets/images` directory in your project
-(see the [Assets Directory Structure](flame/structure.md)) and you have to add it to the
-[assets section](https://docs.flutter.dev/ui/assets/assets-and-images) of your `pubspec.yaml` file.
-In this class we also set the size of the component to 200x200 and the [anchor](flame/components/position_component.md#anchor)
-to the center of the component by sending them to the `super` constructor. We also let the user of
-the `Player` class set the position of the component when creating it
-(`Player(position: Vector2(0, 0))`).
+В этом примере мы создали класс `Player`, расширяющий `SpriteComponent`. Мы переопределили `onLoad`, чтобы установить спрайт компонента, загружаемый из файла изображения `player.png`. Изображение должно находиться в папке `assets/images` вашего проекта (см. [Assets Directory Structure](flame/structure.md)), и его нужно добавить в [секцию assets](https://docs.flutter.dev/ui/assets/assets-and-images) файла `pubspec.yaml`. В этом классе мы также устанавливаем размер компонента 200x200 и [якорь](flame/components/position_component.md#anchor) в центр, передавая их в конструктор суперкласса. Пользователь класса `Player` может задавать позицию компонента при его создании (`Player(position: Vector2(0, 0))`).
 
-To handle input on a component you can add any of our [input mixins](flame/inputs/inputs.md) to the
-component. For example, if you want to handle tap input you can add the `TapCallbacks` mixin to the
-player component, and receive tap events within the bounds of the player component. Or if you want
-to handle tap input on the whole world you can add the `TapCallbacks` mixin to the extended `World`
-class.
+Для обработки ввода в компоненте вы можете добавить любой из наших [примесей ввода](flame/inputs/inputs.md) к компоненту. Например, чтобы обрабатывать касания, добавьте примесь `TapCallbacks` к компоненту игрока, и вы будете получать события касания в границах компонента. Если же нужно обрабатывать касания по всему миру, добавьте `TapCallbacks` к расширенному классу `World`.
 
-The following example handles taps on the player component, and when the player component is
-tapped the size of the player will increase by 50 pixels in both width and height.
+Следующий пример обрабатывает касания компонента игрока: когда по игроку нажимают, его размер увеличивается на 50 пикселей по ширине и высоте.
 
 ```dart
 import 'package:flame/components.dart';
@@ -161,29 +128,22 @@ class Player extends SpriteComponent with TapCallbacks {
 }
 ```
 
-This is just a simple example of how to get started with Flame, there are many more features that you
-can use (and probably need) to create your game, but this should give you a good starting point.
+Это лишь простой пример того, как начать работу с Flame. Существует гораздо больше функций, которые вы можете использовать (и, вероятно, они вам понадобятся) для создания вашей игры, но этот пример должен дать вам хорошую отправную точку.
 
-You can also check out the [awesome flame repository](https://github.com/flame-engine/awesome-flame#user-content-articles--tutorials),
-it contains quite a lot of good tutorials and articles written by the community to get you started
-with Flame.
+Также посмотрите репозиторий [awesome flame](https://github.com/flame-engine/awesome-flame#user-content-articles--tutorials) — он содержит множество отличных руководств и статей, написанных сообществом, которые помогут вам начать работу с Flame.
 
 
-## Outside of the scope of the engine
+## За рамками движка
 
-Games sometimes require complex feature sets depending on what the game is all about. Some of these
-feature sets are outside of the scope of the Flame Engine ecosystem, in this section you can find
-them, and also some recommendations of packages/services that can be used:
+В зависимости от специфики игры могут потребоваться сложные наборы функций. Некоторые из них выходят за рамки экосистемы Flame Engine. В этом разделе они перечислены, а также даны рекомендации по пакетам и сервисам, которые можно использовать:
 
 
-### Multiplayer (netcode)
+### Мультиплеер (сетевой код)
 
-Flame doesn't bundle any network feature, which may be needed to write online multiplayer games.
+Flame не включает никаких сетевых функций, которые могут понадобиться для создания многопользовательских онлайн-игр.
 
-If you are building a multiplayer game, here are some recommendations of packages/services:
+Если вы разрабатываете мультиплеерную игру, вот несколько рекомендаций по пакетам и сервисам:
 
-- [Nakama](https://github.com/obrunsmann/flutter_nakama/): An open-source server designed
- to power modern games and apps.
-- [Firebase](https://firebase.google.com/): Provides dozens of services that can be used to write
-simpler multiplayer experiences.
-- [Supabase](https://supabase.com/): A cheaper alternative to Firebase, based on Postgres.
+- [Nakama](https://github.com/obrunsmann/flutter_nakama/): Сервер с открытым исходным кодом, созданный для поддержки современных игр и приложений.
+- [Firebase](https://firebase.google.com/): Предоставляет десятки сервисов, которые можно использовать для создания простых мультиплеерных возможностей.
+- [Supabase](https://supabase.com/): Более дешёвая альтернатива Firebase, основанная на Postgres.
