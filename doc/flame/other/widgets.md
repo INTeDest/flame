@@ -1,53 +1,41 @@
-# Widgets
+# Виджеты
 
-One advantage when developing games with Flutter is the ability to use Flutter's extensive toolset
-for building UIs, Flame tries to expand on that by introducing widgets that are made with games in
-mind.
+Одним из преимуществ разработки игр с использованием Flutter является возможность применять обширный инструментарий Flutter для построения пользовательских интерфейсов. Flame стремится расширить эти возможности, вводя виджеты, созданные специально с учётом потребностей игр.
 
-Here you can find all the available widgets provided by Flame.
+Здесь вы найдёте все доступные виджеты, предоставляемые Flame.
 
-You can also see all the widgets showcased inside a
-[Dashbook](https://github.com/bluefireteam/dashbook) sandbox in the
-[widgets examples directory](https://github.com/flame-engine/flame/tree/main/examples/lib/stories/widgets).
+Все виджеты также можно увидеть в изолированной среде [Dashbook](https://github.com/bluefireteam/dashbook) в [каталоге примеров виджетов](https://github.com/flame-engine/flame/tree/main/examples/lib/stories/widgets).
 
 
 ## NineTileBoxWidget
 
-A Nine Tile Box is a rectangle drawn using a grid sprite.
+Nine Tile Box — это прямоугольник, рисуемый с использованием сеточного спрайта.
 
-The grid sprite is a 3x3 grid and with 9 blocks, representing the 4 corners, the 4 sides and the
-middle.
+Сеточный спрайт представляет собой сетку 3x3 из 9 блоков, соответствующих 4 углам, 4 сторонам и середине.
 
-The corners are drawn at the same size, the sides are stretched on the side direction and the middle
-is expanded both ways.
+Углы отрисовываются без растяжения, стороны растягиваются в соответствующем направлении, а середина расширяется в обоих направлениях.
 
-The `NineTileBoxWidget` implements a `Container` using that standard. This pattern is also
-implemented as a component in the `NineTileBoxComponent` so that you can add this feature directly
-to your `FlameGame`. To learn more, check the
-[NineTileBoxComponent docs](../components/utility_components.md#ninetileboxcomponent).
+`NineTileBoxWidget` реализует `Container` по этому стандарту. Этот шаблон также реализован в виде компонента в `NineTileBoxComponent`, так что вы можете добавить эту функциональность непосредственно в ваш `FlameGame`. Подробнее см. в [документации по NineTileBoxComponent](../components/utility_components.md#ninetileboxcomponent).
 
-Here you can find an example of how to use it (without using the `NineTileBoxComponent`):
+Пример использования (без `NineTileBoxComponent`):
 
 ```dart
 import 'package:flame/widgets';
 
 NineTileBoxWidget(
-    image: image, // dart:ui image instance
-    tileSize: 16, // The width/height of the tile on your grid image
-    destTileSize: 50, // The dimensions for the tile on canvas
-    child: SomeWidget(), // Any Flutter widget
+    image: image, // экземпляр dart:ui image
+    tileSize: 16, // Ширина/высота тайла на вашем сеточном изображении
+    destTileSize: 50, // Размеры тайла на холсте
+    child: SomeWidget(), // Любой Flutter-виджет
 )
 ```
 
 
 ## SpriteButton
 
-`SpriteButton` is a simple widget that creates a button based on Flame sprites. This can be very
-useful when trying to create non-default looking buttons. For example when it is easier for you to
-achieve your wanted look by drawing the button in a graphics editor, instead of making it directly
-in Flutter.
+`SpriteButton` — это простой виджет, создающий кнопку на основе спрайтов Flame. Это может быть очень полезно, когда нужно сделать кнопки нестандартного вида. Например, когда вам проще достичь желаемого внешнего вида, нарисовав кнопку в графическом редакторе, чем создавая её напрямую во Flutter.
 
-How to use it:
+Как использовать:
 
 ```dart
 SpriteButton(
@@ -57,7 +45,7 @@ SpriteButton(
     label: const Text('Sprite Button', style: const TextStyle(color: const Color(0xFF5D275D))),
     sprite: _spriteButton,
     pressedSprite: _pressedSprite,
-    // Optional, will be shown when onPressed in null.
+    // Опционально, будет показан, когда onPressed равен null.
     disabledSprite: _disabledSprite,
     height: _height,
     width: _width,
@@ -67,10 +55,9 @@ SpriteButton(
 
 ## SpriteWidget
 
-`SpriteWidget` is a widget used to display a [Sprite](../rendering/images.md#sprite) inside a widget
-tree.
+`SpriteWidget` — это виджет, используемый для отображения [Sprite](../rendering/images.md#sprite) в дереве виджетов.
 
-This is how to use it:
+Вот как его использовать:
 
 ```dart
 SpriteWidget(
@@ -82,10 +69,9 @@ SpriteWidget(
 
 ## SpriteAnimationWidget
 
-`SpriteAnimationWidget` is a widget used to display
-[SpriteAnimations](../rendering/images.md#animation) inside a widget tree.
+`SpriteAnimationWidget` — это виджет, используемый для отображения [SpriteAnimations](../rendering/images.md#animation) в дереве виджетов.
 
-This is how to use it:
+Вот как его использовать:
 
 ```dart
 SpriteAnimationWidget(
