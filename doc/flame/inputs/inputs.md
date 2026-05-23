@@ -1,33 +1,27 @@
-# Inputs
+## Ввод
 
-Games are interactive by nature, so handling player input is essential. Flame provides input
-handling that works on all platforms Flutter supports: touch on mobile, mouse and keyboard on
-desktop, and
-pointer events on the web. These APIs are designed as mixins that you add to your components, so
-each component can independently decide which input events it cares about. This is similar to how
-Flutter's [GestureDetector](https://api.flutter.dev/flutter/widgets/GestureDetector-class.html)
-works, but adapted for Flame's component tree.
+Игры по своей природе интерактивны, поэтому обработка пользовательского ввода играет ключевую роль. Flame предоставляет обработку ввода, работающую на всех платформах, поддерживаемых Flutter: касания на мобильных устройствах, мышь и клавиатура на десктопе, а также события указателя в вебе. Эти API реализованы в виде примесей, которые вы добавляете к своим компонентам, благодаря чему каждый компонент может самостоятельно определять, какие события ввода его интересуют. Принцип схож с тем, как работает Flutter-виджет [GestureDetector](https://api.flutter.dev/flutter/widgets/GestureDetector-class.html), но адаптирован для компонентного дерева Flame.
 
-- [Tap Events](tap_events.md)
-- [Drag Events](drag_events.md)
-- [Scale Events](scale_events.md)
-- [Long Press Events](long_press_events.md)
-- [Gesture Input](gesture_input.md)
-- [Keyboard Input](keyboard_input.md)
-- [Other Inputs and Helpers](other_inputs.md)
-- [Pointer Events](pointer_events.md)
-- [Hardware Keyboard Detector](hardware_keyboard_detector.md)
+- [События касания](tap_events.md)
+- [События перетаскивания](drag_events.md)
+- [События масштабирования](scale_events.md)
+- [События долгого нажатия](long_press_events.md)
+- [Жесты](gesture_input.md)
+- [Клавиатурный ввод](keyboard_input.md)
+- [Другие вводы и помощники](other_inputs.md)
+- [События указателя](pointer_events.md)
+- [Обнаружение аппаратной клавиатуры](hardware_keyboard_detector.md)
 
 ```{toctree}
 :hidden:
 
-Tap Events                <tap_events.md>
-Drag Events               <drag_events.md>
-Scale Events              <scale_events.md>
-Long Press Events         <long_press_events.md>
-Gesture Input             <gesture_input.md>
-Keyboard Input            <keyboard_input.md>
-Other Inputs              <other_inputs.md>
-Pointer Events            <pointer_events.md>
-HardwareKeyboardDetector  <hardware_keyboard_detector.md>
+События касания                <tap_events.md>
+События перетаскивания         <drag_events.md>
+События масштабирования        <scale_events.md>
+События долгого нажатия        <long_press_events.md>
+Жесты                          <gesture_input.md>
+Клавиатурный ввод              <keyboard_input.md>
+Другие вводы                   <other_inputs.md>
+События указателя              <pointer_events.md>
+Обнаружение аппаратной клавиатуры <hardware_keyboard_detector.md>
 ```
