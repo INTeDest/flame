@@ -1,14 +1,10 @@
-# Assets Directory Structure
+# Структура каталогов ассетов
 
-Games rely heavily on external assets like images for sprites, audio files for sound effects, and
-tile maps for levels. Organizing these files consistently ensures that Flame's built-in loaders
-(and Flutter's own [asset system](https://docs.flutter.dev/ui/assets/assets-and-images)) can find
-them without extra configuration.
+Игры сильно зависят от внешних ресурсов, таких как изображения для спрайтов, аудиофайлы для звуковых эффектов и тайловые карты для уровней. Единообразная организация этих файлов гарантирует, что встроенные загрузчики Flame (и собственная [система ассетов Flutter](https://docs.flutter.dev/ui/assets/assets-and-images)) смогут найти их без дополнительной настройки.
 
-Flame has a proposed structure for your project that includes the standard Flutter `assets`
-directory in addition to some children: `audio`, `images` and `tiles`.
+Flame предлагает структуру для вашего проекта, которая включает стандартную директорию Flutter `assets`, а также несколько вложенных папок: `audio`, `images` и `tiles`.
 
-If using the following example code:
+При использовании следующего примера кода:
 
 ```dart
 class MyGame extends FlameGame {
@@ -16,11 +12,11 @@ class MyGame extends FlameGame {
   Future<void> onLoad() async {
     await FlameAudio.play('explosion.mp3');
 
-    // Load some images
+    // Загрузить несколько изображений
     await Flame.images.load('player.png');
     await Flame.images.load('enemy.png');
     
-    // Or load all images in your images folder
+    // Или загрузить все изображения из папки images
     await Flame.images.loadAllImages();
 
     final map1 = await TiledComponent.load('level.tmx', tileSize);
@@ -28,7 +24,7 @@ class MyGame extends FlameGame {
 }
 ```
 
-The following file structure is where Flame would expect to find the files:
+Следующая файловая структура — это то место, где Flame ожидает найти файлы:
 
 ```text
 .
@@ -44,9 +40,9 @@ The following file structure is where Flame would expect to find the files:
         └── map.json
 ```
 
-Optionally you can split your `audio` folder into two subfolders, one for `music` and one for `sfx`.
+При желании вы можете разделить папку `audio` на две подпапки: одну для `music` и одну для `sfx`.
 
-Don't forget to add these files to your `pubspec.yaml` file:
+Не забудьте добавить эти файлы в ваш файл `pubspec.yaml`:
 
 ```yaml
 flutter:
@@ -57,11 +53,6 @@ flutter:
     - assets/tiles/level.tmx
 ```
 
-If you want to change this structure, this is possible by using the `prefix` parameter and creating
-your instances of `AssetsCache`, `Images`, and `AudioCache`, instead of using the
-global ones provided by Flame.
+Если вы хотите изменить эту структуру, это возможно с помощью параметра `prefix` и создания собственных экземпляров `AssetsCache`, `Images` и `AudioCache` вместо использования глобальных, предоставляемых Flame.
 
-Additionally, `AssetsCache` and `Images` can receive a custom
-[`AssetBundle`](https://api.flutter.dev/flutter/services/AssetBundle-class.html).
-This can be used to make Flame look for assets in a different location other than the `rootBundle`,
-like the file system for example.
+Кроме того, `AssetsCache` и `Images` могут принимать пользовательский [`AssetBundle`](https://api.flutter.dev/flutter/services/AssetBundle-class.html). Это можно использовать, чтобы заставить Flame искать ассеты в другом месте, отличном от `rootBundle`, например, в файловой системе.
