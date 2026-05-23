@@ -1,7 +1,6 @@
-# Remove Effect
+# Эффект удаления
 
-This is a simple effect that can be attached to a component causing it to be removed from the game
-tree after the specified delay has passed:
+Это простой эффект, который можно прикрепить к компоненту, чтобы он был удалён из дерева игры по истечении указанной задержки:
 
 ```{flutter-app}
 :sources: ../flame/examples
