@@ -1,4 +1,158 @@
-# Other Inputs and Helpers
+# Другие вводы и помощники
+
+Здесь описываются методы ввода помимо клавиатуры и мыши.
+
+Другие документы по вводу:
+
+- [Ввод жестов](gesture_input.md): для жестов мыши и касаний
+- [Клавиатурный ввод](keyboard_input.md): для нажатий клавиш
+
+
+## Джойстик
+
+Flame предоставляет компонент для создания виртуального джойстика для приема ввода в вашей игре.
+Чтобы воспользоваться этой функцией, нужно создать `JoystickComponent`, настроить его нужным образом и добавить в игру.
+
+Для лучшего понимания рассмотрите следующий пример:
+
+```dart
+class MyGame extends FlameGame {
+
+  @override
+  Future<void> onLoad() async {
+    super.onLoad();
+    final image = await images.load('joystick.png');
+    final sheet = SpriteSheet.fromColumnsAndRows(
+      image: image,
+      columns: 6,
+      rows: 1,
+    );
+    final joystick = JoystickComponent(
+      knob: SpriteComponent(
+        sprite: sheet.getSpriteById(1),
+        size: Vector2.all(100),
+      ),
+      background: SpriteComponent(
+        sprite: sheet.getSpriteById(0),
+        size: Vector2.all(150),
+      ),
+      margin: const EdgeInsets.only(left: 40, bottom: 40),
+    );
+
+    final player = Player(joystick);
+    add(player);
+    add(joystick);
+  }
+}
+
+class Player extends SpriteComponent with HasGameReference {
+  Player(this.joystick)
+    : super(
+        anchor: Anchor.center,
+        size: Vector2.all(100.0),
+      );
+
+  /// Пикселей в секунду
+  double maxSpeed = 300.0;
+
+  final JoystickComponent joystick;
+
+  @override
+  Future<void> onLoad() async {
+    sprite = await game.loadSprite('layers/player.png');
+    position = game.size / 2;
+  }
+
+  @override
+  void update(double dt) {
+    if (joystick.direction != JoystickDirection.idle) {
+      position.add(joystick.relativeDelta  * maxSpeed * dt);
+      angle = joystick.delta.screenAngle();
+    }
+  }
+}
+```
+
+В этом примере мы создали классы `MyGame` и `Player`.
+`MyGame` создает джойстик, который передается в `Player` при его создании.
+В классе `Player` мы реагируем на текущее состояние джойстика.
+
+У джойстика есть несколько полей, которые меняются в зависимости от его состояния.
+
+Для определения состояния джойстика следует использовать следующие поля:
+
+- `intensity`: Процент [0.0, 1.0], на который ручка (knob) оттянута от центра к краю джойстика (или `knobRadius`, если он задан).
+- `delta`: Абсолютная величина (в виде `Vector2`), на которую ручка смещена от центра.
+- `relativeDelta`: Процентное отношение, представленное как `Vector2`, и направление, в котором ручка в данный момент оттянута от базового положения к краю джойстика.
+
+Если вы хотите создать кнопки вместе с джойстиком, обратите внимание на [`HudButtonComponent`](#hudbuttoncomponent).
+
+Полный код реализации джойстика можно найти в [примере джойстика](https://github.com/flame-engine/flame/blob/main/examples/lib/stories/input/joystick_example.dart).
+Вы также можете увидеть [JoystickComponent в действии](https://examples.flame-engine.org/#/Input_Joystick), чтобы посмотреть на живой пример работы функции ввода с джойстика в игре.
+
+В качестве дополнительного задания изучите [продвинутый пример джойстика](https://github.com/flame-engine/flame/blob/main/examples/lib/stories/input/joystick_advanced_example.dart).
+Посмотрите, что еще могут делать продвинутые функции, в [живой демонстрации](https://examples.flame-engine.org/#/Input_Joystick_Advanced).
+
+
+## HudButtonComponent
+
+`HudButtonComponent` — это кнопка, которую можно определить с отступами от края `Viewport`, а не с помощью позиции. Она принимает два `PositionComponent`: `button` и `buttonDown`. Первый используется для состояния покоя кнопки, а второй отображается, когда кнопка нажата. Второй компонент необязателен, если вы не хотите менять внешний вид кнопки при нажатии или обрабатываете это через `button`.
+
+Как следует из названия, эта кнопка по умолчанию является HUD-элементом, то есть она остается статичной на экране, даже если камера игры перемещается. Вы также можете использовать этот компонент как не-HUD, установив `hudButtonComponent.respectCamera = true;`.
+
+Если вы хотите реагировать на нажатие и отпускание кнопки (что обычно и требуется), можно либо передать функции обратного вызова в аргументы `onPressed` и `onReleased`, либо расширить компонент и переопределить `onTapDown`, `onTapUp` и/или `onTapCancel`, реализовав свою логику там.
+
+
+## SpriteButtonComponent
+
+`SpriteButtonComponent` — это кнопка, определяемая двумя `Sprite`: один представляет состояние, когда кнопка нажата, а второй — когда отпущена.
+
+
+## ButtonComponent
+
+`ButtonComponent` — это кнопка, определяемая двумя `PositionComponent`: один для нажатого состояния, второй для отпущенного. Если вы хотите использовать только спрайты для кнопки, воспользуйтесь [](#spritebuttoncomponent), но этот компонент может быть полезен, если, например, вы хотите сделать кнопкой `SpriteAnimationComponent` или что-то еще, не являющееся чистым спрайтом.
+
+
+## Геймпад
+
+У Flame есть специальный плагин для поддержки внешних игровых контроллеров (геймпадов).
+Подробнее в [репозитории Gamepads](https://github.com/flame-engine/gamepads).
+
+
+## AdvancedButtonComponent
+
+`AdvancedButtonComponent` имеет отдельные состояния для каждой из фаз указателя.
+Внешний вид можно настроить для каждого состояния, и каждое состояние представлено `PositionComponent`.
+
+Вот поля, которые можно использовать для настройки внешнего вида `AdvancedButtonComponent`:
+
+- `defaultSkin`: Компонент, отображаемый на кнопке по умолчанию.
+- `downSkin`: Компонент, отображаемый при щелчке или касании кнопки.
+- `hoverSkin`: Компонент, отображаемый при наведении на кнопку (на десктопе и в вебе).
+- `defaultLabel`: Компонент, показываемый поверх обложек (skins). Автоматически выравнивается по центру.
+- `disabledSkin`: Компонент, отображаемый, когда кнопка отключена.
+- `disabledLabel`: Компонент, показываемый поверх обложек, когда кнопка отключена.
+
+
+## ToggleButtonComponent
+
+[ToggleButtonComponent] — это [AdvancedButtonComponent], который может переключаться между выбранным и невыбранным состоянием.
+
+Помимо уже существующих обложек, [ToggleButtonComponent] содержит следующие обложки:
+
+- `defaultSelectedSkin`: Компонент, отображаемый, когда кнопка выбрана.
+- `downAndSelectedSkin`: Компонент, отображаемый, когда выбираемая кнопка выбрана и нажата.
+- `hoverAndSelectedSkin`: Отображение при наведении на выбираемую и выбранную кнопку (десктоп и веб).
+- `disabledAndSelectedSkin`: Для состояния, когда кнопка выбрана и отключена.
+- `defaultSelectedLabel`: Компонент, показываемый поверх обложек, когда кнопка выбрана.
+
+
+## Примесь IgnoreEvents
+
+Если вы не хотите, чтобы поддерево компонентов получало события, можно использовать примесь `IgnoreEvents`.
+После добавления этой примеси можно отключить события для компонента и его потомков, установив `ignoreEvents = true` (значение по умолчанию при добавлении примеси), а затем снова включить, установив `false`, когда нужно снова получать события.
+
+Это может быть сделано в целях оптимизации, поскольку в настоящее время все события проходят через всё дерево компонентов.# Other Inputs and Helpers
 
 This includes documentation for input methods besides keyboard and mouse.
 
