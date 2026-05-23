@@ -1,8 +1,7 @@
 # HardwareKeyboardDetector
 
 ```{note}
-Most of the time you will want to use the `KeyboardEvents` class or the
-`KeyboardHandler` mixin instead of this component.
+В большинстве случаев вместо этого компонента лучше использовать класс `KeyboardEvents` или примесь `KeyboardHandler`.
 ```
 
 ```{dartdoc}
