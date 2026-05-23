@@ -1,16 +1,11 @@
-# Rotate Effects
+# Эффекты вращения
 
-Rotate effects are used to change the orientation of a component over time. They can be used to make
-a component spin, turn towards a target, or rotate around a point. The rotation is specified in
-radians, and the effects can be applied to any component that has a rotation property, such as the
-`PositionComponent`.
+Эффекты вращения используются для изменения ориентации компонента с течением времени. С их помощью можно заставить компонент вращаться, поворачиваться к цели или вращаться вокруг точки. Угол поворота задаётся в радианах, и эффекты могут применяться к любому компоненту, имеющему свойство вращения, например `PositionComponent`.
 
 
 ## `RotateEffect.by`
 
-Rotates the target clockwise by the specified angle relative to its current orientation. The angle
-is in radians. For example, the following effect will rotate the target 90º (=[tau]/4 in radians)
-clockwise:
+Поворачивает цель по часовой стрелке на указанный угол относительно её текущей ориентации. Угол задаётся в радианах. Например, следующий эффект повернёт цель на 90º (= [tau]/4 радиан) по часовой стрелке:
 
 ```{flutter-app}
 :sources: ../flame/examples
@@ -30,8 +25,7 @@ final effect = RotateEffect.by(
 
 ## `RotateEffect.to`
 
-Rotates the target clockwise to the specified angle. For example, the following will rotate the
-target to look east (0º is north, 90º=[tau]/4 east, 180º=tau/2 south, and 270º=tau*3/4 west):
+Поворачивает цель по часовой стрелке до указанного угла. Например, следующий код повернёт цель в направлении на восток (0º — север, 90º = [tau]/4 — восток, 180º = tau/2 — юг, 270º = tau*3/4 — запад):
 
 ```{flutter-app}
 :sources: ../flame/examples
@@ -51,9 +45,7 @@ final effect = RotateEffect.to(
 
 ## `RotateAroundEffect`
 
-Rotates the target clockwise by the specified angle relative to its current orientation around
-the specified center. The angle is in radians. For example, the following effect will rotate the
-target 90º (=[tau]/4 in radians) clockwise around (100, 100).
+Поворачивает цель по часовой стрелке на указанный угол относительно её текущей ориентации вокруг заданного центра. Угол в радианах. Например, следующий эффект повернёт цель на 90º (= [tau]/4 радиан) по часовой стрелке вокруг точки (100, 100).
 
 ```{flutter-app}
 :sources: ../flame/examples
