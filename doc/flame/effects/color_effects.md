@@ -1,15 +1,13 @@
-# Color Effects
+# Эффекты цвета
 
-Color effects are used to change the color of a component over time. They can be used to tint a component,
-change its opacity, or apply a color filter.
+Цветовые эффекты используются для изменения цвета компонента с течением времени. Их можно применять для тонирования компонента, изменения его непрозрачности или наложения цветового фильтра.
 
 
 ## ColorEffect
 
-This effect will change the base color of the paint, causing the rendered component to be tinted by
-the provided color between a provided range.
+Этот эффект изменяет базовый цвет краски, в результате чего отображаемый компонент тонируется заданным цветом в указанном диапазоне.
 
-Usage example:
+Пример использования:
 
 ```{flutter-app}
 :sources: ../flame/examples
@@ -28,18 +26,14 @@ final effect = ColorEffect(
 );
 ```
 
-The `opacityFrom` and `opacityTo` arguments will determine "how much" of the color that will be
-applied to the component. In this example the effect will start with 20% and will go up to 80%.
+Аргументы `opacityFrom` и `opacityTo` определяют, «насколько сильно» цвет будет применён к компоненту. В этом примере эффект начнётся с 20% и дойдёт до 80%.
 
-**Note:** Due to how this effect is implemented, and how Flutter's `ColorFilter` class works, this
-effect can't be mixed with other `ColorEffect`s, when more than one is added to the component, only
-the last one will have effect.
+**Примечание:** Из-за особенностей реализации этого эффекта и того, как работает класс `ColorFilter` во Flutter, данный эффект нельзя комбинировать с другими `ColorEffect`. Если к компоненту добавлено более одного такого эффекта, сработает только последний.
 
 
 ## `OpacityToEffect`
 
-This effect will change the opacity of the target over time to the specified alpha-value.
-It can only be applied to components that implement the `OpacityProvider`.
+Этот эффект изменяет непрозрачность цели с течением времени до указанного значения альфа-канала. Он может применяться только к компонентам, реализующим `OpacityProvider`.
 
 ```{flutter-app}
 :sources: ../flame/examples
@@ -56,11 +50,7 @@ final effect = OpacityEffect.to(
 );
 ```
 
-If the component uses multiple paints, the effect can target one more more of those paints
-using the `target` parameter. The `HasPaint` mixin implements `OpacityProvider` and exposes APIs
-to easily create providers for desired paintIds. For single paintId `opacityProviderOf` can be used
-and for multiple paintIds and `opacityProviderOfList` can be used.
-
+Если компонент использует несколько красок (paints), эффект можно направить на одну или несколько из них с помощью параметра `target`. Примесь `HasPaint` реализует `OpacityProvider` и предоставляет API для лёгкого создания провайдеров для нужных идентификаторов красок. Для одного `paintId` можно использовать `opacityProviderOf`, а для нескольких — `opacityProviderOfList`.
 
 ```{flutter-app}
 :sources: ../flame/examples
@@ -80,15 +70,12 @@ final effect = OpacityEffect.to(
 );
 ```
 
-The opacity value of 0 corresponds to a fully transparent component, and the opacity value of 1 is
-fully opaque. Convenience constructors `OpacityEffect.fadeOut()` and `OpacityEffect.fadeIn()` will
-animate the target into full transparency / full visibility respectively.
+Значение непрозрачности 0 соответствует полностью прозрачному компоненту, а 1 — полностью непрозрачному. Удобные конструкторы `OpacityEffect.fadeOut()` и `OpacityEffect.fadeIn()` анимируют цель соответственно до полной прозрачности или полной видимости.
 
 
 ## `OpacityByEffect`
 
-This effect will change the opacity of the target relative to the specified alpha-value. For example,
-the following effect will change the opacity of the target by `90%`:
+Этот эффект изменяет непрозрачность цели относительно указанного значения альфа-канала. Например, следующий эффект изменит непрозрачность цели на `90%`:
 
 ```{flutter-app}
 :sources: ../flame/examples
@@ -105,20 +92,16 @@ final effect = OpacityEffect.by(
 );
 ```
 
-Currently this effect can only be applied to components that have a `HasPaint` mixin. If the
-target component uses multiple paints, the effect can target any individual color using the
-`paintId` parameter.
+В настоящее время этот эффект может применяться только к компонентам с примесью `HasPaint`. Если целевой компонент использует несколько красок, эффект можно направить на любой отдельный цвет с помощью параметра `paintId`.
 
 
 ## GlowEffect
 
 ```{note}
-This effect is currently experimental, and its API may change in the future.
+Этот эффект пока экспериментальный, и его API может измениться в будущем.
 ```
 
-This effect will apply the glowing shade around target relative to the specified
-`glow-strength`. The color of shade will be targets paint color. For example, the following effect
-will apply the glowing shade around target by strength of `10`:
+Этот эффект накладывает светящуюся тень вокруг цели в соответствии с указанной `glow-strength` (силой свечения). Цвет тени будет соответствовать цвету краски цели. Например, следующий эффект применит светящуюся тень вокруг цели с силой `10`:
 
 ```{flutter-app}
 :sources: ../flame/examples
@@ -135,13 +118,12 @@ final effect = GlowEffect(
 );
 ```
 
-Currently this effect can only be applied to components that have a `HasPaint` mixin.
+В настоящее время этот эффект может применяться только к компонентам с примесью `HasPaint`.
 
 
 ## `HueToEffect`
 
-This effect will change the hue of the target over time to the specified angle in radians.
-It can only be applied to components that implement the `HueProvider`.
+Этот эффект изменяет оттенок (hue) цели с течением времени до указанного угла в радианах. Он может применяться только к компонентам, реализующим `HueProvider`.
 
 ```dart
 final effect = HueEffect.to(
@@ -153,8 +135,7 @@ final effect = HueEffect.to(
 
 ## `HueByEffect`
 
-This effect will rotate the hue of the target relative by the specified angle in radians.
-It can only be applied to components that implement the `HueProvider`.
+Этот эффект поворачивает оттенок цели на указанный угол в радианах. Он может применяться только к компонентам, реализующим `HueProvider`.
 
 ```{flutter-app}
 :sources: ../flame/examples
@@ -171,10 +152,7 @@ final effect = HueEffect.by(
 );
 ```
 
-Both effects can target any component implementing `HueProvider`. The `HasPaint` mixin
-implements `HueProvider` and handles the necessary `ColorFilter` updates automatically.
+Оба эффекта могут быть нацелены на любой компонент, реализующий `HueProvider`. Примесь `HasPaint` реализует `HueProvider` и автоматически обрабатывает необходимые обновления `ColorFilter`.
 
 > [!TIP]
-> **Performance Note**: `HueEffect` is extremely efficient because it modifies the `Paint`'s
-> `colorFilter` directly. If you have many components, prefer this effect over the `HueDecorator`,
-> which uses `saveLayer()` and has much higher overhead.
+> **Замечание о производительности**: `HueEffect` чрезвычайно эффективен, поскольку изменяет `colorFilter` объекта `Paint` напрямую. Если у вас много компонентов, предпочтите этот эффект вместо `HueDecorator`, который использует `saveLayer()` и создаёт гораздо большую нагрузку.
