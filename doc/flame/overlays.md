@@ -1,45 +1,33 @@
-# Overlays
+# Оверлеи
 
-Games often need to display Flutter widgets on top of the game canvas for things like pause menus,
-score displays, or chat interfaces. Because Flame games live inside a Flutter widget tree, you can
-layer any Flutter widget over the game surface. The Overlays API makes this especially convenient
-by letting you toggle named widget overlays on and off from within your game code.
+Поскольку игру Flame можно обернуть в виджет, её довольно легко использовать вместе с другими виджетами Flutter в вашем дереве. Однако если вы хотите легко отображать виджеты поверх вашей игры Flame, например сообщения, экраны меню и тому подобное, можно воспользоваться API Widgets Overlay, чтобы сделать это ещё проще.
 
-Since a Flame game can be wrapped in a widget, it is quite easy to use it alongside other Flutter
-widgets in your tree. However, if you want to easily show widgets on top of your Flame game, like
-messages, menu screens or something of that nature, you can use the Widgets Overlay API to make
-things even easier.
+`Game.overlays` позволяет отображать любой Flutter-виджет поверх экземпляра игры. Это значительно упрощает создание, например, меню паузы или экрана инвентаря.
 
-`Game.overlays` enables any Flutter widget to be shown on top of a game instance. This makes it very
-easy to create things like a pause menu or an inventory screen for example.
-
-The feature can be used via the `game.overlays.add` and `game.overlays.remove` methods that mark an
-overlay to be shown or hidden, respectively, via a `String` argument that identifies the overlay.
-After that, you can map each overlay to their corresponding Widget in your `GameWidget` declaration
-by providing an `overlayBuilderMap`.
+Эта возможность используется через методы `game.overlays.add` и `game.overlays.remove`, которые помечают оверлей для отображения или скрытия соответственно с помощью строкового аргумента-идентификатора. После этого вы можете сопоставить каждый оверлей с соответствующим виджетом в объявлении `GameWidget`, предоставив `overlayBuilderMap`.
 
 ```dart
-  // Inside your game:
+  // Внутри вашей игры:
   final pauseOverlayIdentifier = 'PauseMenu';
   final secondaryOverlayIdentifier = 'SecondaryMenu';
 
-  // Marks 'SecondaryMenu' to be rendered.
+  // Помечает 'SecondaryMenu' для отображения.
   overlays.add(secondaryOverlayIdentifier, priority: 1);
-  // Marks 'PauseMenu' to be rendered. Priority = 0 by default
-  // which means the 'PauseMenu' will be displayed under the 'SecondaryMenu'
+  // Помечает 'PauseMenu' для отображения. Priority = 0 по умолчанию,
+  // что означает, что 'PauseMenu' будет отображаться под 'SecondaryMenu'
   overlays.add(pauseOverlayIdentifier);
-  // Marks 'PauseMenu' to not be rendered.
+  // Помечает 'PauseMenu' для скрытия.
   overlays.remove(pauseOverlayIdentifier);
-  // Toggles the 'PauseMenu' overlay.
+  // Переключает оверлей 'PauseMenu'.
   overlays.toggle(pauseOverlayIdentifier);
-  // Check if the 'PauseMenu' is being rendered
+  // Проверяет, отображается ли 'PauseMenu'
   final hasPauseMenu = overlays.isActive(pauseOverlayIdentifier);
-  // Set active state ov 'SecondaryMenu' based on a condition
+  // Устанавливает активное состояние 'SecondaryMenu' в зависимости от условия
   overlays.setActive(secondaryOverlayIdentifier, active: !hasPauseMenu);
 ```
 
 ```dart
-// On the widget declaration
+// В объявлении виджета
 final game = MyGame();
 
 Widget build(BuildContext context) {
@@ -47,17 +35,16 @@ Widget build(BuildContext context) {
     game: game,
     overlayBuilderMap: {
       'PauseMenu': (BuildContext context, MyGame game) {
-        return Text('A pause menu');
+        return Text('Меню паузы');
       },
       'SecondaryMenu': (BuildContext context, MyGame game) {
-        return Text('A secondary menu');
+        return Text('Вторичное меню');
       },
     },
   );
 }
 ```
 
-The order of rendering for an overlay is determined by the order of the keys in the
-`overlayBuilderMap`.
+Порядок рендеринга оверлеев определяется порядком ключей в `overlayBuilderMap`.
 
-See an [example of the Overlays feature](https://github.com/flame-engine/flame/blob/main/examples/lib/stories/system/overlays_example.dart).
+Смотрите [пример использования функции Overlays](https://github.com/flame-engine/flame/blob/main/examples/lib/stories/system/overlays_example.dart).
