@@ -1,4 +1,308 @@
-# Sprite Components
+# Спрайтовые компоненты
+
+Спрайты — это двухмерные изображения (или области изображений), представляющие визуальное представление игровых объектов. Это наиболее распространённый способ отображения персонажей, предметов, фонов и других визуальных элементов в двухмерных играх. Flame предоставляет несколько компонентов на основе спрайтов, упрощающих загрузку изображений, воспроизведение анимаций и переключение между визуальными состояниями, используя при этом свойства трансформации, унаследованные от `PositionComponent`.
+
+
+## SpriteComponent
+
+Наиболее часто используемой реализацией `PositionComponent` является `SpriteComponent`, который можно создать с помощью `Sprite`:
+
+```dart
+import 'package:flame/components/component.dart';
+
+class MyGame extends FlameGame {
+  late final SpriteComponent player;
+
+  @override
+  Future<void> onLoad() async {
+    final sprite = await Sprite.load('player.png');
+    final size = Vector2.all(128.0);
+    final player = SpriteComponent(size: size, sprite: sprite);
+
+    // По умолчанию Vector2(0.0, 0.0), также можно задать в конструкторе
+    player.position = Vector2(10, 20);
+
+    // По умолчанию 0, также можно задать в конструкторе
+    player.angle = 0;
+
+    // Добавляет компонент
+    add(player);
+  }
+}
+```
+
+
+## SpriteAnimationComponent
+
+Этот класс используется для представления компонента, содержащего спрайты, объединённые в одну циклическую анимацию.
+
+Пример создания простой трёхкадровой анимации с использованием трёх разных изображений:
+
+```dart
+@override
+Future<void> onLoad() async {
+  final sprites = [0, 1, 2]
+      .map((i) => Sprite.load('player_$i.png'));
+  final animation = SpriteAnimation.spriteList(
+    await Future.wait(sprites),
+    stepTime: 0.01,
+  );
+  this.player = SpriteAnimationComponent(
+    animation: animation,
+    size: Vector2.all(64.0),
+  );
+}
+```
+
+Если у вас есть спрайт-лист, можно использовать конструктор `sequenced` из класса `SpriteAnimationData` (подробнее см. [Изображения > Анимация](../rendering/images.md#animation)):
+
+```dart
+@override
+Future<void> onLoad() async {
+  final size = Vector2.all(64.0);
+  final data = SpriteAnimationData.sequenced(
+    textureSize: size,
+    amount: 2,
+    stepTime: 0.1,
+  );
+  this.player = SpriteAnimationComponent.fromFrameData(
+    await images.load('player.png'),
+    data,
+  );
+}
+```
+
+Все компоненты анимации внутренне поддерживают `SpriteAnimationTicker`, который тикает `SpriteAnimation`. Это позволяет нескольким компонентам использовать один и тот же объект анимации.
+
+Пример:
+
+```dart
+final sprites = [/* Ваш список спрайтов */];
+final animation = SpriteAnimation.spriteList(sprites, stepTime: 0.01);
+
+final animationTicker = SpriteAnimationTicker(animation);
+
+// или можно попросить объект анимации создать тикер для вас
+final animationTicker = animation.createTicker(); // создаёт новый тикер
+
+animationTicker.update(dt);
+```
+
+Чтобы дождаться окончания анимации (когда она достигнет последнего кадра и не зациклена), используйте `animationTicker.completed`.
+
+Пример:
+
+```dart
+await animationTicker.completed;
+
+doSomething();
+
+// или
+
+animationTicker.completed.whenComplete(doSomething);
+```
+
+Кроме того, `SpriteAnimationTicker` имеет следующие необязательные обратные вызовы событий: `onStart`, `onFrame` и `onComplete`. Подписаться на них можно так:
+
+```dart
+final animationTicker = SpriteAnimationTicker(animation)
+  ..onStart = () {
+    // Выполнить действие при старте.
+  };
+
+final animationTicker = SpriteAnimationTicker(animation)
+  ..onComplete = () {
+    // Выполнить действие при завершении.
+  };
+
+final animationTicker = SpriteAnimationTicker(animation)
+  ..onFrame = (index) {
+    if (index == 1) {
+      // Выполнить действие для второго кадра.
+    }
+  };
+```
+
+Чтобы сбросить анимацию на первый кадр при удалении компонента, установите `resetOnRemove` в `true`:
+
+```dart
+SpriteAnimationComponent(
+  animation: animation,
+  size: Vector2.all(64.0),
+  resetOnRemove: true,
+);
+```
+
+
+## SpriteAnimationGroupComponent
+
+`SpriteAnimationGroupComponent` — это простая обёртка над `SpriteAnimationComponent`, позволяющая вашему компоненту содержать несколько анимаций и переключать текущую проигрываемую анимацию во время выполнения. Поскольку этот компонент является обёрткой, прослушивание событий реализуется так же, как описано в разделе [SpriteAnimationComponent](#spriteanimationcomponent).
+
+Использование очень похоже на `SpriteAnimationComponent`, но вместо инициализации одной анимацией этот компонент получает `Map` с ключом обобщённого типа `T` и значением `SpriteAnimation`, а также текущую анимацию.
+
+Пример:
+
+```dart
+enum RobotState {
+  idle,
+  running,
+}
+
+final running = await loadSpriteAnimation(/* опущено */);
+final idle = await loadSpriteAnimation(/* опущено */);
+
+final robot = SpriteAnimationGroupComponent<RobotState>(
+  animations: {
+    RobotState.running: running,
+    RobotState.idle: idle,
+  },
+  current: RobotState.idle,
+);
+
+// Переключение текущей анимации на "running"
+robot.current = RobotState.running;
+```
+
+Поскольку компонент работает с несколькими `SpriteAnimation`, ему требуется соответствующее количество тикеров для их обновления. Используйте геттер `animationsTickers` для доступа к карте, содержащей тикеры для каждого состояния анимации. Это полезно, если нужно зарегистрировать обратные вызовы `onStart`, `onComplete` и `onFrame`.
+
+Пример:
+
+```dart
+enum RobotState { idle, running, jump }
+
+final running = await loadSpriteAnimation(/* опущено */);
+final idle = await loadSpriteAnimation(/* опущено */);
+
+final robot = SpriteAnimationGroupComponent<RobotState>(
+  animations: {
+    RobotState.running: running,
+    RobotState.idle: idle,
+  },
+  current: RobotState.idle,
+);
+
+robot.animationTickers?[RobotState.running]?.onStart = () {
+  // Действие при старте анимации бега.
+};
+
+robot.animationTickers?[RobotState.jump]?.onStart = () {
+  // Действие при старте анимации прыжка.
+};
+
+robot.animationTickers?[RobotState.jump]?.onComplete = () {
+  // Действие при завершении анимации прыжка.
+};
+
+robot.animationTickers?[RobotState.idle]?.onFrame = (currentIndex) {
+  // Действие в зависимости от текущего индекса кадра анимации покоя.
+};
+```
+
+
+## SpriteGroupComponent
+
+`SpriteGroupComponent` очень похож на свой анимационный аналог, но предназначен специально для спрайтов.
+
+Пример:
+
+```dart
+class PlayerComponent extends SpriteGroupComponent<ButtonState>
+    with HasGameReference<SpriteGroupExample>, TapCallbacks {
+  @override
+  Future<void> onLoad() async {
+    final pressedSprite = await game.loadSprite(/* опущено */);
+    final unpressedSprite = await game.loadSprite(/* опущено */);
+
+    sprites = {
+      ButtonState.pressed: pressedSprite,
+      ButtonState.unpressed: unpressedSprite,
+    };
+
+    current = ButtonState.unpressed;
+  }
+
+  // обработчики касаний опущены...
+}
+```
+
+
+## IconComponent
+
+`IconComponent` отображает Flutter `IconData` (например, `Icons.star`) в виде компонента Flame. Иконка растеризуется в изображение один раз во время `onLoad()`, а затем каждый кадр рисуется с помощью `canvas.drawImageRect()` с использованием `Paint` компонента. Поскольку иконка визуализируется как кешированное изображение, а не текст, все эффекты на основе `Paint` работают «из коробки», включая `tint()`, `setOpacity()`, `ColorEffect`, `OpacityEffect`, `GlowEffect` и пользовательские `ColorFilter`.
+
+
+### Базовое использование
+
+```dart
+import 'package:flame/components.dart';
+import 'package:flutter/material.dart';
+
+class MyGame extends FlameGame {
+  @override
+  Future<void> onLoad() async {
+    final star = IconComponent(
+      icon: Icons.star,
+      iconSize: 64,
+      position: Vector2(100, 100),
+    );
+    add(star);
+  }
+}
+```
+
+
+### Тонирование и эффекты
+
+Иконка растеризуется белым цветом, что позволяет тонировать её в любой цвет с помощью методов `HasPaint`:
+
+```dart
+// Тонирование иконки в золотой цвет
+final star = IconComponent(
+  icon: Icons.star,
+  iconSize: 64,
+  position: Vector2(100, 100),
+)..tint(const Color(0xFFFFD700));
+
+// Установка непрозрачности
+star.setOpacity(0.5);
+
+// Или использование пользовательской краски
+final icon = IconComponent(
+  icon: Icons.favorite,
+  iconSize: 48,
+  paint: Paint()..colorFilter = const ColorFilter.mode(
+    Color(0xFFFF0000),
+    BlendMode.srcATop,
+  ),
+);
+```
+
+
+### Параметры конструктора
+
+- `icon`: `IconData` для отображения (например, `Icons.star`, `Icons.favorite`).
+- `iconSize`: Разрешение, с которым иконка растеризуется (по умолчанию `64`). Не зависит от отображаемого размера компонента `size`.
+- `size`: Отображаемый размер компонента. Если не указан, по умолчанию `Vector2.all(iconSize)`.
+- `paint`: Опциональный `Paint` для эффектов рендеринга.
+- Все стандартные параметры `PositionComponent` (`position`, `scale`, `angle`, `anchor` и т.д.).
+
+
+### Изменение иконки во время выполнения
+
+Свойства `icon` и `iconSize` можно изменять после создания. Компонент автоматически перерастеризует иконку на следующем кадре:
+
+```dart
+final iconComponent = IconComponent(
+  icon: Icons.play_arrow,
+  iconSize: 64,
+);
+
+// Позже сменить иконку
+iconComponent.icon = Icons.pause;
+
+// Или изменить разрешение растеризации
+iconComponent.iconSize = 128;
+```# Sprite Components
 
 Sprites are 2D images (or regions of images) that represent the visual appearance of game objects.
 They are the most common way to display characters, items, backgrounds, and other visuals in 2D
