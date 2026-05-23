@@ -1,21 +1,15 @@
-# Palette
+# Палитра
 
-Throughout your game you are going to need to use colors in lots of places. There are two classes on
-`dart:ui` that can be used, `Color` and `Paint`.
+На протяжении всей игры вам потребуется использовать цвета во многих местах. В `dart:ui` есть два класса, которые можно использовать: `Color` и `Paint`.
 
-The `Color` class represents a ARGB color in a hexadecimal integer
-format. So to create a `Color` instance, you just need to pass the color as an integer in the ARGB
-format.
+Класс `Color` представляет ARGB-цвет в формате шестнадцатеричного целого числа. Поэтому для создания экземпляра `Color` достаточно передать цвет как целое число в формате ARGB.
 
 <!--- cSpell:ignore AARRGGBB -->
-You can use Dart's hexadecimal notation to make it really easy; for instance: `0xFF00FF00` is fully
-opaque green (the "mask" would be `0xAARRGGBB`).
+Можно использовать шестнадцатеричную нотацию Dart, чтобы сделать это очень легко; например, `0xFF00FF00` — полностью непрозрачный зелёный («маска» имеет вид `0xAARRGGBB`).
 
-**Note**: The first two hexadecimal digits are for
-the alpha channel (transparency), unlike on regular (non-A) RGB. The max(FF = 255) for the two first
-digits means fully opaque, and the min (00 = 0) means fully transparent.
+**Примечание**: первые две шестнадцатеричные цифры относятся к альфа-каналу (прозрачности), в отличие от обычного (не-A) RGB. Максимальное значение (FF = 255) для первых двух цифр означает полностью непрозрачный, а минимальное (00 = 0) — полностью прозрачный.
 
-In the Material Flutter package there is a `Colors` class that provides common colors as constants:
+В материальном пакете Flutter есть класс `Colors`, предоставляющий общие цвета в виде констант:
 
 ```dart
 import 'package:flutter/material.dart' show Colors;
@@ -23,45 +17,31 @@ import 'package:flutter/material.dart' show Colors;
 const black = Colors.black;
 ```
 
-Some more complex methods might also take a `Paint` object, which is a more complete structure that
-allows you to configure aspects related to stroke, colors, filters and blends.
-However, normally when using even the more complex APIs, you just want an instance of a `Paint`
-object representing just a single simple plain solid color.
+Некоторые более сложные методы могут также принимать объект `Paint`, который представляет собой более полную структуру, позволяющую настраивать аспекты, связанные с обводкой, цветами, фильтрами и смешиванием. Однако обычно при использовании даже самых сложных API вам нужен всего лишь экземпляр объекта `Paint`, представляющий один простой сплошной цвет.
 
-**Note:** we don't recommend that you create a new `Paint` object every time you need a specific
-`Paint`, since it could potentially lead to a lot of unnecessary objects being created. A better way
-is to either define the `Paint` object somewhere and re-use it (however, do note that the `Paint`
-class is mutable, unlike `Color`), or to use the `Palette` class to define all the colors that you
-want to use in your game.
+**Примечание:** мы не рекомендуем создавать новый объект `Paint` каждый раз, когда требуется определённый `Paint`, поскольку это потенциально может привести к созданию большого количества ненужных объектов. Лучше либо определить объект `Paint` где-то и переиспользовать его (однако обратите внимание, что класс `Paint` изменяемый, в отличие от `Color`), либо использовать класс `Palette` для определения всех цветов, которые вы хотите использовать в игре.
 
-You can create such an object like this:
+Создать такой объект можно следующим образом:
 
 ```dart
 Paint green = Paint()..color = const Color(0xFF00FF00);
 ```
 
-To help you with this and also keep your game's color palette consistent, Flame adds the `Palette`
-class. You can use it to easily access both `Color`s and `Paint`s where needed and also define
-the colors your game use as constants, so that you don't get those mixed up.
+Чтобы помочь вам с этим, а также сохранить единообразие цветовой палитры игры, Flame добавляет класс `Palette`. С его помощью можно легко получать как `Color`, так и `Paint` там, где это необходимо, а также определять цвета, используемые в вашей игре, в виде констант, чтобы они не перепутались.
 
-The `BasicPalette` class is an example of what a palette can look like, and adds black and white as
-colors. So you can access black or white directly from the `BasicPalette`; for example,
-using `color`:
+Класс `BasicPalette` — это пример того, как может выглядеть палитра; он добавляет чёрный и белый в качестве цветов. Таким образом, вы можете получить чёрный или белый напрямую из `BasicPalette`; например, используя `color`:
 
 ```dart
 TextConfig regular = TextConfig(color: BasicPalette.white.color);
 ```
 
-Or using `paint`:
+Или используя `paint`:
 
 ```dart
 canvas.drawRect(rect, BasicPalette.black.paint);
 ```
 
-However, the idea is that you can create your own palette, following the `BasicPalette` example, and
-add the color palette/scheme of your game. Then you will be able to statically access any color in
-your components and classes. Below is an example of a `Palette` implementation, from the [example
-game BGUG](https://github.com/bluefireteam/bgug/blob/master/lib/palette.dart):
+Однако идея заключается в том, что вы можете создать свою собственную палитру, следуя примеру `BasicPalette`, и добавить в неё цветовую гамму вашей игры. Тогда вы сможете статически обращаться к любому цвету в ваших компонентах и классах. Ниже приведён пример реализации `Palette` из [примера игры BGUG](https://github.com/bluefireteam/bgug/blob/master/lib/palette.dart):
 
 ```dart
 import 'dart:ui';
@@ -79,10 +59,7 @@ class Palette {
 }
 ```
 
-A `PaletteEntry` is a `const` class that holds information of a color and it has the following
-members:
+`PaletteEntry` — это `const`-класс, который содержит информацию о цвете и имеет следующие члены:
 
-- `color`: returns the `Color` specified
-- `paint`: creates a new `Paint` with the color specified. `Paint` is a non-`const` class, so this
-  method actually creates a brand new instance every time it's called. It's safe to cascade
-  mutations to this.
+- `color`: возвращает заданный `Color`
+- `paint`: создаёт новый `Paint` с заданным цветом. `Paint` не является `const`-классом, поэтому этот метод фактически создаёт новый экземпляр при каждом вызове. В него безопасно добавлять каскадные изменения.
