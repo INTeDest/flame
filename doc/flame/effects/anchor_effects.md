@@ -1,13 +1,11 @@
-# Anchor Effects
+# Эффекты якоря
 
-Anchor effects are used to change the anchor point of a component over time. The anchor point is
-the point around which the component rotates and scales.
+Эффекты якоря используются для изменения якорной точки компонента с течением времени. Якорная точка — это точка, вокруг которой компонент вращается и масштабируется.
 
 
 ## `AnchorByEffect`
 
-Changes the location of the target's anchor by the specified offset. This effect can also be created
-using `AnchorEffect.by()`.
+Изменяет положение якоря цели на указанное смещение. Этот эффект также можно создать с помощью `AnchorEffect.by()`.
 
 ```{flutter-app}
 :sources: ../flame/examples
@@ -27,8 +25,7 @@ final effect = AnchorByEffect(
 
 ## `AnchorToEffect`
 
-Changes the location of the target's anchor. This effect can also be created using
-`AnchorEffect.to()`.
+Изменяет положение якоря цели. Этот эффект также можно создать с помощью `AnchorEffect.to()`.
 
 ```{flutter-app}
 :sources: ../flame/examples
