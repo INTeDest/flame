@@ -1,68 +1,49 @@
 # PositionComponent
 
-Most visible objects in a game need a position, size, and rotation. `PositionComponent` provides
-these transform properties, making it the base class for nearly every visual element in Flame:
-sprites, animations, shapes, and your own custom components. It mirrors the concept of a
-[`Positioned`](https://api.flutter.dev/flutter/widgets/Positioned-class.html) widget in Flutter, but
-in a game-oriented coordinate system.
+Большинство видимых объектов в игре нуждаются в позиции, размере и повороте. `PositionComponent` предоставляет эти свойства трансформации, являясь базовым классом почти для каждого визуального элемента во Flame: спрайтов, анимаций, фигур и ваших собственных компонентов. Он отражает концепцию виджета [`Positioned`](https://api.flutter.dev/flutter/widgets/Positioned-class.html) во Flutter, но в игровой системе координат.
 
-This class represents a positioned object on the screen, be it a floating rectangle, a rotating
-sprite, or anything else with position and size. It can also represent a group of positioned
-components if children are added to it.
+Этот класс представляет позиционируемый объект на экране, будь то плавающий прямоугольник, вращающийся спрайт или что-либо ещё с позицией и размером. Он также может представлять группу позиционированных компонентов, если к нему добавлены дочерние элементы.
 
-The base of the `PositionComponent` is that it has a `position`, `size`, `scale`, `angle` and
-`anchor` which transforms how the component is rendered.
+Основой `PositionComponent` является наличие свойств `position`, `size`, `scale`, `angle` и `anchor`, которые определяют, как компонент отображается.
 
 
-## Position
+## Позиция (position)
 
-The `position` is just a `Vector2` which represents the position of the component's anchor in
-relation to its parent; if the parent is a `FlameGame`, it is in relation to the viewport.
-
-
-## Size
-
-The `size` of the component when the zoom level of the camera is 1.0 (no zoom, default).
-The `size` is *not* in relation to the parent of the component.
+`position` — это просто `Vector2`, представляющий положение якоря компонента относительно его родителя; если родителем является `FlameGame`, то относительно вьюпорта.
 
 
-## Scale
+## Размер (size)
 
-The `scale` is how much the component and its children should be scaled. Since it is represented
-by a `Vector2`, you can scale in a uniform way by changing `x` and `y` with the same amount, or in a
-non-uniform way, by changing `x` or `y` by different amounts.
+`size` компонента при уровне масштабирования камеры 1.0 (без зума, по умолчанию). `size` *не* зависит от родительского компонента.
 
 
-## Angle
+## Масштаб (scale)
 
-The `angle` is the rotation angle around the anchor, represented as a double in radians. It is
-relative to the parent's angle.
-
-
-## Native Angle
-
-The `nativeAngle` is an angle in radians, measured clockwise, representing the default orientation
-of the component. It can be used to define the direction in which the component is facing when
-[angle](#angle) is zero.
-
-It is especially helpful when making a sprite based component look at a specific target. If the
-original image of the sprite is not facing in the up/north direction, the calculated angle to make
-the component look at the target will need some offset to make it look correct. For such cases,
-`nativeAngle` can be used to let the component know what direction the original image is facing.
-
-An example could be a bullet image pointing in the east direction. In this case `nativeAngle` can
-be set to pi/2 radians. Following are some common directions and their corresponding native
-angle values.
-
-Direction | Native Angle | In degrees
-----------|--------------|-------------
-Up/North  | 0            | 0
-Down/South| pi or -pi    | 180 or -180
-Left/West | -pi/2        | -90
-Right/East| pi/2         | 90
+`scale` показывает, насколько сильно должен масштабироваться компонент и его дочерние элементы. Поскольку он представлен типом `Vector2`, можно масштабировать равномерно, изменяя `x` и `y` на одинаковую величину, или неравномерно, изменяя `x` и `y` на разные значения.
 
 
-## Anchor
+## Угол (angle)
+
+`angle` — это угол поворота вокруг якоря, представленный числом типа double в радианах. Он задаётся относительно угла родителя.
+
+
+## Исходный угол (nativeAngle)
+
+`nativeAngle` — это угол в радианах, отсчитываемый по часовой стрелке, представляющий ориентацию компонента по умолчанию. Он используется для определения направления, в котором компонент обращён, когда [угол](#angle) равен нулю.
+
+Это особенно полезно при создании компонента на основе спрайта, который должен смотреть на определённую цель. Если исходное изображение спрайта не направлено вверх/на север, вычисленный угол для поворота компонента к цели потребует смещения, чтобы это выглядело правильно. В таких случаях `nativeAngle` позволяет указать компоненту, в каком направлении обращено исходное изображение.
+
+Пример: пуля, изображение которой направлено на восток. Тогда `nativeAngle` можно установить в pi/2 радиан. Ниже приведены некоторые распространённые направления и соответствующие им значения исходного угла.
+
+Направление      | Исходный угол (Native Angle) | В градусах
+-----------------|------------------------------|-------------
+Вверх/Север      | 0                            | 0
+Вниз/Юг          | pi или -pi                   | 180 или -180
+Влево/Запад      | -pi/2                        | -90
+Вправо/Восток    | pi/2                         | 90
+
+
+## Якорь (anchor)
 
 ```{flutter-app}
 :sources: ../../flame/examples
@@ -74,16 +55,9 @@ the anchor points. Note that the local position of the child
 component is (0, 0) at all times.
 ```
 
-The `anchor` is where on the component that the position and rotation should be defined from (the
-default is `Anchor.topLeft`). So if you have the anchor set as `Anchor.center` the component's
-position on the screen will be in the center of the component and if an `angle` is applied, it is
-rotated around the anchor, so in this case around the center of the component. You can think of it
-as the point within the component by which Flame "grabs" it.
+`anchor` определяет точку на компоненте, относительно которой задаются позиция и поворот (по умолчанию `Anchor.topLeft`). Так, если установить `anchor` в `Anchor.center`, позиция компонента на экране будет соответствовать центру компонента, а при применении `angle` поворот будет осуществляться вокруг якоря, то есть в данном случае вокруг центра. Это можно представить как точку внутри компонента, за которую Flame его «держит».
 
-When `position` or `absolutePosition` of a component is queried, the returned coordinates are that
-of the `anchor` of the component. In case you want to find the position of a specific anchor
-point of a component which is not actually the `anchor` of that component, you can use the
-`positionOfAnchor` and `absolutePositionOfAnchor` methods.
+Когда запрашивается `position` или `absolutePosition` компонента, возвращаются координаты именно `anchor` этого компонента. Если же нужно найти позицию конкретной якорной точки, не являющейся `anchor` данного компонента, можно использовать методы `positionOfAnchor` и `absolutePositionOfAnchor`.
 
 ```dart
 final comp = PositionComponent(
@@ -91,29 +65,25 @@ final comp = PositionComponent(
   anchor: Anchor.center,
 );
 
-// Returns (0,0)
+// Возвращает (0,0)
 final p1 = component.position;
 
-// Returns (10, 10)
+// Возвращает (10, 10)
 final p2 = component.positionOfAnchor(Anchor.bottomRight);
 ```
 
-A common pitfall when using `anchor` is confusing it as being the attachment point for children
-components. For example, setting `anchor` to `Anchor.center` for a parent component does not mean
-that the children components will be placed w.r.t the center of parent.
+Распространённая ошибка при использовании `anchor` — путать его с точкой привязки для дочерних компонентов. Например, установка `anchor` в `Anchor.center` для родительского компонента не означает, что дочерние компоненты будут размещаться относительно центра родителя.
 
 ```{note}
-Local origin for a child component is always the top-left
-corner of its parent component, irrespective of their
-`anchor` values.
+Локальное начало координат для дочернего компонента всегда находится в
+верхнем левом углу родительского компонента, независимо от значений
+`anchor` у них обоих.
 ```
 
 
-## PositionComponent children
+## Дочерние компоненты PositionComponent
 
-All children of the `PositionComponent` will be transformed in relation to the parent, which means
-that the `position`, `angle` and `scale` will be relative to the parent's state.
-So if you, for example, wanted to position a child in the center of the parent you would do this:
+Все дочерние компоненты `PositionComponent` трансформируются относительно родителя, то есть их `position`, `angle` и `scale` будут заданы относительно состояния родителя. Так, например, чтобы разместить дочерний элемент в центре родителя, можно сделать следующее:
 
 ```dart
 @override
@@ -130,26 +100,15 @@ void onLoad() {
 }
 ```
 
-Remember that most components that are rendered on the screen are `PositionComponent`s, so
-this pattern can be used in for example [SpriteComponent](sprite_components.md#spritecomponent)
-and [SpriteAnimationComponent](sprite_components.md#spriteanimationcomponent) too.
+Помните, что большинство компонентов, отображаемых на экране, являются `PositionComponent`, поэтому этот подход можно использовать, например, и в [SpriteComponent](sprite_components.md#spritecomponent), и в [SpriteAnimationComponent](sprite_components.md#spriteanimationcomponent).
 
 
-## Render PositionComponent
+## Рендеринг PositionComponent
 
-When implementing the `render` method for a component that extends `PositionComponent` remember to
-render from the top left corner (0.0). Your render method should not handle where on the screen your
-component should be rendered. To handle where and how your component should be rendered use the
-`position`, `angle` and `anchor` properties and Flame will automatically handle the rest for you.
+При реализации метода `render` для компонента, расширяющего `PositionComponent`, не забывайте выполнять отрисовку от верхнего левого угла (0.0). Ваш метод `render` не должен отвечать за то, где на экране будет отрисован компонент. Для управления положением и ориентацией используйте свойства `position`, `angle` и `anchor`, а Flame автоматически позаботится об остальном.
 
-If you want to know where on the screen the bounding box of the component is you can use the
-`toRect` method.
+Если нужно узнать, где на экране находится ограничивающий прямоугольник компонента, можно использовать метод `toRect`.
 
-In the event that you want to change the direction of your component's rendering, you can also use
-`flipHorizontally()` and `flipVertically()` to flip anything drawn to canvas during
-`render(Canvas canvas)`, around the anchor point. These methods are available on all
-`PositionComponent` objects, and are especially useful on `SpriteComponent` and
-`SpriteAnimationComponent`.
+Если требуется изменить направление отрисовки компонента, можно также использовать `flipHorizontally()` и `flipVertically()`, чтобы отразить всё, что рисуется на холсте во время `render(Canvas canvas)`, относительно точки якоря. Эти методы доступны для всех объектов `PositionComponent` и особенно полезны для `SpriteComponent` и `SpriteAnimationComponent`.
 
-In case you want to flip a component around its center without having to change the anchor to
-`Anchor.center`, you can use `flipHorizontallyAroundCenter()` and `flipVerticallyAroundCenter()`.
+Если нужно отразить компонент относительно его центра без изменения якоря на `Anchor.center`, можно использовать методы `flipHorizontallyAroundCenter()` и `flipVerticallyAroundCenter()`.
