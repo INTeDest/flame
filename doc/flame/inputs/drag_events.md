@@ -1,20 +1,13 @@
-# Drag Events
+# События перетаскивания
 
-**Drag events** occur when the user moves their finger across the screen of the device, or when they
-move the mouse while holding its button down.
+**События перетаскивания** происходят, когда пользователь перемещает палец по экрану устройства или двигает мышь с зажатой кнопкой.
 
-Multiple drag events can occur at the same time, if the user is using multiple fingers. Such cases
-will be handled correctly by Flame, and you can even keep track of the events by using their
-`pointerId` property.
+Несколько событий перетаскивания могут происходить одновременно, если пользователь использует несколько пальцев. Такие случаи корректно обрабатываются Flame, и вы даже можете отслеживать события, используя их свойство `pointerId`.
 
-For those components that you want to respond to drags, add the `DragCallbacks` mixin.
+Для компонентов, которые должны реагировать на перетаскивания, добавьте примесь `DragCallbacks`.
 
-- This mixin adds four overridable methods to your component: `onDragStart`, `onDragUpdate`,
-  `onDragEnd`, and `onDragCancel`. By default, these methods do nothing; they need to be overridden
-  in order to perform any function.
-- In addition, the component must implement the `containsLocalPoint()` method (already implemented
-  in `PositionComponent`, so most of the time you don't need to do anything here). This method
-  allows Flame to know whether the event occurred within the component or not.
+- Эта примесь добавляет в компонент четыре переопределяемых метода: `onDragStart`, `onDragUpdate`, `onDragEnd` и `onDragCancel`. По умолчанию эти методы ничего не делают; для выполнения каких-либо действий их необходимо переопределить.
+- Кроме того, компонент должен реализовывать метод `containsLocalPoint()` (уже реализован в `PositionComponent`, поэтому в большинстве случаев вам ничего не нужно делать). Этот метод позволяет Flame определить, произошло ли событие внутри компонента или нет.
 
 ```dart
 class MyComponent extends PositionComponent with DragCallbacks {
@@ -22,16 +15,14 @@ class MyComponent extends PositionComponent with DragCallbacks {
 
    @override
    void onDragStart(DragStartEvent event) {
-     // Do something in response to a drag event
+     // Выполнить действие в ответ на событие перетаскивания
    }
 }
 ```
 
+## Демонстрация
 
-## Demo
-
-In this example you can use drag gestures to either drag star-like shapes across the screen, or to
-draw curves inside the magenta rectangle.
+В этом примере вы можете использовать жесты перетаскивания, чтобы перетаскивать звездообразные фигуры по экрану или рисовать кривые внутри пурпурного прямоугольника.
 
 ```{flutter-app}
 :sources: ../flame/examples
@@ -39,94 +30,53 @@ draw curves inside the magenta rectangle.
 :show: widget code
 ```
 
-
-## Drag anatomy
-
+## Анатомия перетаскивания
 
 ### onDragStart
 
-This is the first event that occurs in a drag sequence. Usually, the event will be delivered to the
-topmost component at the point of touch with the `DragCallbacks` mixin. However, by setting the flag
-`event.continuePropagation` to true, you can allow the event to propagate to the components below.
+Это первое событие в последовательности перетаскивания. Обычно событие доставляется самому верхнему компоненту в точке касания, имеющему примесь `DragCallbacks`. Однако, установив флаг `event.continuePropagation` в true, вы можете разрешить событию распространяться на нижележащие компоненты.
 
-The `DragStartEvent` object associated with this event will contain the coordinate of the point
-where the event has originated. This point is available in multiple coordinate system:
-`devicePosition` is given in the coordinate system of the entire device, `canvasPosition` is in the
-coordinate system of the game widget, and `localPosition` provides the position in the component's
-local coordinate system.
+Объект `DragStartEvent`, связанный с этим событием, содержит координаты точки, в которой событие возникло. Эта точка доступна в нескольких системах координат: `devicePosition` задана в системе координат всего устройства, `canvasPosition` — в системе координат игрового виджета, а `localPosition` предоставляет позицию в локальной системе координат компонента.
 
-Any component that receives `onDragStart` will later be receiving `onDragUpdate` and `onDragEnd`
-events as well.
-
+Любой компонент, получивший `onDragStart`, впоследствии также будет получать события `onDragUpdate` и `onDragEnd`.
 
 ### onDragUpdate
 
-This event is fired continuously as user drags their finger across the screen. It will not fire if
-the user is holding their finger still.
+Это событие генерируется непрерывно, пока пользователь перемещает палец по экрану. Оно не генерируется, если пользователь держит палец неподвижно.
 
-The default implementation delivers this event to all the components that received the previous
-`onDragStart` with the same pointer id. If the point of touch is still within the component, then
-`event.localPosition` will give the position of that point in the local coordinate system. However,
-if the user moves their finger away from the component, the property `event.localPosition` will
-return a point whose coordinates are NaNs. Likewise, the `event.renderingTrace` in this case will be
-empty. However, the `canvasPosition` and `devicePosition` properties of the event will be valid.
+Реализация по умолчанию доставляет это событие всем компонентам, которые получили предыдущий `onDragStart` с тем же идентификатором указателя. Если точка касания всё ещё находится внутри компонента, то `event.localPosition` вернёт позицию этой точки в локальной системе координат. Однако, если пользователь уводит палец за пределы компонента, свойство `event.localPosition` вернёт точку с координатами NaN. Аналогично, `event.renderingTrace` в этом случае будет пустым. Однако свойства `canvasPosition` и `devicePosition` события останутся действительными.
 
-In addition, the `DragUpdateEvent` will contain `delta`, the amount the finger has moved since
-the previous `onDragUpdate`, or since the `onDragStart` if this is the first drag-update after
-a drag-start.
+Кроме того, `DragUpdateEvent` содержит `delta` — величину перемещения пальца с момента предыдущего `onDragUpdate` или с момента `onDragStart`, если это первое обновление после начала перетаскивания.
 
-The `event.timestamp` property measures the time elapsed since the beginning of the drag. It can be
-used, for example, to compute the speed of the movement.
-
+Свойство `event.timestamp` измеряет время, прошедшее с начала перетаскивания. Его можно использовать, например, для вычисления скорости движения.
 
 ### onDragEnd
 
-This event is fired when the user lifts their finger and thus stops the drag gesture. There is no
-position associated with this event.
-
+Это событие возникает, когда пользователь поднимает палец и тем самым завершает жест перетаскивания. С этим событием не связана никакая позиция.
 
 ### onDragCancel
 
-The precise semantics when this event occurs is not clear, so we provide a default implementation
-which simply converts this event into an `onDragEnd`.
+Точная семантика возникновения этого события неясна, поэтому мы предоставляем реализацию по умолчанию, которая просто преобразует это событие в `onDragEnd`.
 
-
-## Mixins
-
+## Примеси
 
 ### DragCallbacks
 
-The `DragCallbacks` mixin can be added to any `Component` in order for that component to start
-receiving drag events.
+Примесь `DragCallbacks` может быть добавлена к любому `Component`, чтобы этот компонент начал получать события перетаскивания.
 
-This mixin adds methods `onDragStart`, `onDragUpdate`, `onDragEnd`, and `onDragCancel` to the
-component, which by default don't do anything, but can be overridden to implement any real
-functionality.
+Эта примесь добавляет в компонент методы `onDragStart`, `onDragUpdate`, `onDragEnd` и `onDragCancel`, которые по умолчанию ничего не делают, но могут быть переопределены для реализации реальной функциональности.
 
-Another crucial detail is that a component will only receive drag events that originate *within*
-that component, as judged by the `containsLocalPoint()` function. The commonly-used
-`PositionComponent` class provides such an implementation based on its `size` property. Thus, if
-your component derives from a `PositionComponent`, then make sure that you set its size correctly.
-If, however, your component derives from the bare `Component`, then the `containsLocalPoint()`
-method must be implemented manually.
+Ещё одна важная деталь: компонент будет получать только те события перетаскивания, которые начинаются *внутри* этого компонента, что определяется функцией `containsLocalPoint()`. Широко используемый класс `PositionComponent` предоставляет такую реализацию на основе своего свойства `size`. Таким образом, если ваш компонент наследуется от `PositionComponent`, убедитесь, что правильно задали его размер. Если же ваш компонент наследуется от чистого `Component`, то метод `containsLocalPoint()` необходимо реализовать вручную.
 
-If your component is a part of a larger hierarchy, then it will only receive drag events if its
-ancestors have all implemented the `containsLocalPoint` correctly.
-
+Если ваш компонент является частью более крупной иерархии, он будет получать события перетаскивания только в том случае, если все его предки корректно реализовали `containsLocalPoint`.
 
 ### isDragged
 
-The `DragCallbacks` mixin provides an `isDragged` getter that returns `true` while the component is
-actively being dragged. This is set to `true` at `onDragStart` and back to `false` at `onDragEnd`.
-It can be used, for example, to change the component's visual appearance during a drag.
+Примесь `DragCallbacks` предоставляет геттер `isDragged`, который возвращает `true`, пока компонент активно перетаскивается. Он устанавливается в `true` при `onDragStart` и обратно в `false` при `onDragEnd`. Его можно использовать, например, для изменения внешнего вида компонента во время перетаскивания.
 
+## Совмещение с ScaleCallbacks
 
-## Combining with ScaleCallbacks
-
-A component can use both `DragCallbacks` and `ScaleCallbacks` at the same time. When both mixins are
-present, single-finger gestures produce drag events and two-finger gestures produce both drag and
-scale events. This is useful for components that should be draggable with one finger and
-pinch-to-zoom or rotatable with two fingers.
+Компонент может одновременно использовать и `DragCallbacks`, и `ScaleCallbacks`. Когда присутствуют обе примеси, жесты одним пальцем порождают события перетаскивания, а жесты двумя пальцами — как перетаскивание, так и масштабирование. Это полезно для компонентов, которые должны перетаскиваться одним пальцем и масштабироваться щипком или вращаться двумя пальцами.
 
 ```dart
 class InteractiveRectangle extends RectangleComponent
