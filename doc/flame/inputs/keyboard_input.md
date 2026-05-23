@@ -1,49 +1,39 @@
-# Keyboard Input
+# Клавиатурный ввод
 
-This includes documentation for keyboard inputs.
+Здесь представлена документация по клавиатурному вводу.
 
-For other input documents, see also:
+Документация по другим видам ввода:
 
-- [Gesture Input](gesture_input.md): for mouse and touch pointer gestures
-- [Other Inputs](other_inputs.md): For joysticks, game pads, etc.
-
-
-## Intro
-
-The keyboard API on flame relies on the
-[Flutter's Focus widget](https://api.flutter.dev/flutter/widgets/Focus-class.html).
-
-To customize focus behavior, see [Controlling focus](#controlling-focus).
-
-There are two ways a game can react to key strokes; at the game level and at a component level.
-For each we have a mixin that can me added to a `Game` or `Component` class.
+- [Ввод жестов](gesture_input.md): для жестов мыши и касаний
+- [Другие вводы](other_inputs.md): для джойстиков, геймпадов и т.д.
 
 
-### Receive keyboard events in a game level
+## Введение
 
-To make a `Game` sub class sensitive to key stroke, mix it with `KeyboardEvents`.
+API клавиатуры во Flame основан на виджете [Focus](https://api.flutter.dev/flutter/widgets/Focus-class.html) Flutter.
 
-After that, it will be possible to override an `onKeyEvent` method.
+Для настройки поведения фокуса см. раздел [Управление фокусом](#управление-фокусом).
 
-This method receives two parameters, first the
-[`KeyEvent`](https://api.flutter.dev/flutter/services/KeyEvent-class.html)
-that triggers the callback in the first place. The second is a set of the currently pressed
-[`LogicalKeyboardKey`](https://api.flutter.dev/flutter/services/LogicalKeyboardKey-class.html).
+Игра может реагировать на нажатия клавиш двумя способами: на уровне игры и на уровне компонента. Для каждого из них существует примесь, которую можно добавить к классу `Game` или `Component`.
 
-The return value is a
-[`KeyEventResult`](https://api.flutter.dev/flutter/widgets/KeyEventResult.html).
 
-`KeyEventResult.handled` will tell the framework that the key stroke was resolved inside of Flame
-and skip any other keyboard handler widgets apart of `GameWidget`.
+### Получение событий клавиатуры на уровне игры
 
-`KeyEventResult.ignored` will tell the framework to keep testing this event in any other keyboard
-handler widget apart of `GameWidget`. If the event is not resolved by any handler, the framework
-will trigger `SystemSoundType.alert`.
+Чтобы подкласс `Game` реагировал на нажатия клавиш, добавьте к нему примесь `KeyboardEvents`.
 
-`KeyEventResult.skipRemainingHandlers` is very similar to `.ignored`, apart from the fact that will
-skip any other handler widget and will straight up play the alert sound.
+После этого можно переопределить метод `onKeyEvent`.
 
-Minimal example:
+Этот метод принимает два параметра: первый — [`KeyEvent`](https://api.flutter.dev/flutter/services/KeyEvent-class.html), вызвавший обратный вызов, а второй — набор нажатых в данный момент [`LogicalKeyboardKey`](https://api.flutter.dev/flutter/services/LogicalKeyboardKey-class.html).
+
+Возвращаемое значение — [`KeyEventResult`](https://api.flutter.dev/flutter/widgets/KeyEventResult.html).
+
+`KeyEventResult.handled` сообщает фреймворку, что нажатие клавиши было обработано внутри Flame, и следует пропустить все остальные виджеты-обработчики клавиатуры, кроме `GameWidget`.
+
+`KeyEventResult.ignored` сообщает фреймворку, что нужно продолжить проверку этого события в других виджетах-обработчиках клавиатуры, помимо `GameWidget`. Если событие не будет обработано ни одним обработчиком, фреймворк воспроизведёт `SystemSoundType.alert`.
+
+`KeyEventResult.skipRemainingHandlers` очень похож на `.ignored`, за исключением того, что он пропускает все остальные виджеты-обработчики и сразу воспроизводит предупреждающий звук.
+
+Минимальный пример:
 
 ```dart
 class MyGame extends FlameGame with KeyboardEvents {
@@ -72,34 +62,26 @@ class MyGame extends FlameGame with KeyboardEvents {
 ```
 
 
-### Receive keyboard events in a component level
+### Получение событий клавиатуры на уровне компонента
 
-To receive keyboard events directly in components, there is the mixin `KeyboardHandler`.
+Для получения событий клавиатуры непосредственно в компонентах существует примесь `KeyboardHandler`.
 
-Similarly to `TapCallbacks` and `DragCallbacks`, `KeyboardHandler` can be mixed into any subclass of
-`Component`.
+Подобно `TapCallbacks` и `DragCallbacks`, `KeyboardHandler` может быть подмешан к любому подклассу `Component`.
 
-KeyboardHandlers must only be added to games that are mixed with `HasKeyboardHandlerComponents`.
+`KeyboardHandler` следует добавлять только в игры, к которым подмешан `HasKeyboardHandlerComponents`.
 
-> ⚠️ Note: If `HasKeyboardHandlerComponents` is used, you must remove `KeyboardEvents`
-> from the game mixin list to avoid conflicts.
+> ⚠️ Примечание: Если используется `HasKeyboardHandlerComponents`, необходимо убрать `KeyboardEvents`
+> из списка примесей игры, чтобы избежать конфликтов.
 
-After applying `KeyboardHandler`, it will be possible to override an `onKeyEvent` method.
+После применения `KeyboardHandler` можно переопределить метод `onKeyEvent`.
 
-This method receives two parameters. First the
-[`KeyEvent`](https://api.flutter.dev/flutter/services/KeyEvent-class.html)
-that triggered the callback in the first place. The second is a set of the currently pressed
-[`LogicalKeyboardKey`](https://api.flutter.dev/flutter/services/LogicalKeyboardKey-class.html)s.
+Этот метод принимает два параметра. Первый — [`KeyEvent`](https://api.flutter.dev/flutter/services/KeyEvent-class.html), вызвавший обратный вызов. Второй — набор нажатых в данный момент [`LogicalKeyboardKey`](https://api.flutter.dev/flutter/services/LogicalKeyboardKey-class.html).
 
-The returned value should be `true` to allow the continuous propagation of the key event among other
-components. To not allow any other component to receive the event, return `false`.
+Возвращаемое значение должно быть `true`, чтобы разрешить дальнейшее распространение события клавиатуры среди других компонентов. Чтобы запретить другим компонентам получать это событие, верните `false`.
 
-Flame also provides a default implementation called `KeyboardListenerComponent` which can be used
-to handle keyboard events. Like any other component, it can be added as a child to a `FlameGame`
-or another `Component`:
+Flame также предоставляет готовую реализацию — `KeyboardListenerComponent`, которую можно использовать для обработки событий клавиатуры. Как и любой другой компонент, его можно добавить как дочерний к `FlameGame` или другому `Component`:
 
-For example, imagine a `PositionComponent` which has methods to move on the X and Y axis,
-then the following code could be used to bind those methods to key events:
+Например, представьте `PositionComponent` с методами для перемещения по осям X и Y. Тогда следующий код можно использовать для привязки этих методов к событиям клавиш:
 
 ```dart
 add(
@@ -121,16 +103,12 @@ add(
 ```
 
 
-### Controlling focus
+### Управление фокусом
 
-On the widget level, it is possible to use the
-[`FocusNode`](https://api.flutter.dev/flutter/widgets/FocusNode-class.html) API to control whether
-the game is focused or not.
+На уровне виджетов можно использовать API [`FocusNode`](https://api.flutter.dev/flutter/widgets/FocusNode-class.html) для управления тем, находится ли игра в фокусе или нет.
 
-`GameWidget` has an optional `focusNode` parameter that allow its focus to be controlled externally.
+`GameWidget` имеет необязательный параметр `focusNode`, позволяющий управлять фокусом извне.
 
-By default `GameWidget` has its `autofocus` set to true, which means it will get focused once it is
-mounted. To override that behavior, set `autofocus` to false.
+По умолчанию `autofocus` у `GameWidget` установлен в `true`, что означает, что он получит фокус сразу после монтирования. Чтобы переопределить это поведение, установите `autofocus` в `false`.
 
-For a more complete example, see the
-[keyboard input example](https://github.com/flame-engine/flame/blob/main/examples/lib/stories/input/keyboard_example.dart).
+Более полный пример см. в [примере клавиатурного ввода](https://github.com/flame-engine/flame/blob/main/examples/lib/stories/input/keyboard_example.dart).
