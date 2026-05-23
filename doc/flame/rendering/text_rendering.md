@@ -1,29 +1,24 @@
-# Text Rendering
+# Рендеринг текста
 
-Flame has some dedicated classes to help you render text.
-
-
-## Text Components
-
-The simplest way to render text with Flame is to leverage one of the provided text-rendering
-components:
-
-- `TextComponent` for rendering a single line of text
-- `TextBoxComponent` for bounding multi-line text within a sized box, including the possibility of a
-typing effect. You can use the `newLineNotifier` to be notified when a new line is added. Use the
-`onComplete` callback to execute a function when the text is completely printed.
-- `ScrollTextBoxComponent` enhances the functionality of `TextBoxComponent` by adding vertical
-scrolling capability when the text exceeds the boundaries of the enclosing box.
+Flame предлагает несколько специализированных классов для рендеринга текста.
 
 
-All components are showcased in [this example](https://github.com/flame-engine/flame/blob/main/examples/lib/stories/rendering/text_example.dart).
+## Текстовые компоненты
+
+Самый простой способ отобразить текст во Flame — использовать один из предоставляемых компонентов:
+
+- `TextComponent` для рендеринга одной строки текста
+- `TextBoxComponent` для размещения многострочного текста с ограничением по ширине и высоте, включая возможность эффекта печати. Можно использовать `newLineNotifier`, чтобы получать уведомления о добавлении новой строки. Колбэк `onComplete` позволяет выполнить функцию, когда текст полностью напечатан.
+- `ScrollTextBoxComponent` расширяет `TextBoxComponent`, добавляя вертикальную прокрутку, когда текст выходит за границы заданной области.
+
+Все компоненты показаны в [этом примере](https://github.com/flame-engine/flame/blob/main/examples/lib/stories/rendering/text_example.dart).
 
 
 ### TextComponent
 
-`TextComponent` is a simple component that renders a single line of text.
+`TextComponent` — простой компонент, отображающий одну строку текста.
 
-Simple usage:
+Простое использование:
 
 ```dart
 class MyGame extends FlameGame {
@@ -39,10 +34,7 @@ class MyGame extends FlameGame {
 }
 ```
 
-In order to configure aspects of the rendering like font family, size, color, etc, you need to
-provide (or amend) a `TextRenderer` with such information; while you can read more details about
-this interface below, the simplest implementation you can use is the `TextPaint`, which takes a
-Flutter `TextStyle`:
+Чтобы настроить параметры шрифта, цвета и т.п., нужно предоставить (или изменить) `TextRenderer` с соответствующей информацией. Простейшая реализация — `TextPaint`, принимающая Flutter `TextStyle`:
 
 ```dart
 final regular = TextPaint(
@@ -67,35 +59,22 @@ class MyGame extends FlameGame {
 }
 ```
 
-You can find all the options under [TextComponent's
-API](https://pub.dev/documentation/flame/latest/components/TextComponent-class.html).
+Все опции смотрите в [API TextComponent](https://pub.dev/documentation/flame/latest/components/TextComponent-class.html).
 
 
 ### TextBoxComponent
 
-`TextBoxComponent` is very similar to `TextComponent`, but as its name suggest it is used to render
-text inside a bounding box, creating line breaks according to the provided box size.
+`TextBoxComponent` очень похож на `TextComponent`, но предназначен для рендеринга текста внутри ограничивающей рамки с автоматическим переносом строк в соответствии с размером.
 
-You can decide if the box should grow as the text is written or if it should be static by the
-`growingBox` variable in the `TextBoxConfig`. A static box could either have a fixed size (setting
-the `size` property of the `TextBoxComponent`), or to automatically shrink to fit the text content.
+Вы можете управлять тем, должна ли рамка расти по мере добавления текста или оставаться статичной, с помощью `growingBox` в `TextBoxConfig`. Статичная рамка может иметь фиксированный размер (установка свойства `size`) либо автоматически сжиматься под содержимое.
 
-In addition, the `align` property allows you to control the horizontal and vertical alignment of
-the text content. For example, setting `align` to `Anchor.center` will center the text within its
-bounding box both vertically and horizontally.
+Свойство `align` позволяет управлять горизонтальным и вертикальным выравниванием текста. Например, `align: Anchor.center` центрирует текст внутри рамки.
 
-If you want to change the margins of the box use the `margins` variable in the `TextBoxConfig`.
+Для настройки полей рамки используется `margins` в `TextBoxConfig`.
 
-Finally, if you want to simulate a "typing" effect, by showing each character of the string one by
-one as if being typed in real-time, you can provide the `boxConfig.timePerChar` parameter.
+Чтобы симулировать эффект печати (показ символов по одному), задайте `boxConfig.timePerChar`. Для управления эффектом: `skip()` показывает весь текст сразу, а `resetAnimation` сбрасывает анимацию к началу. После вызова `skip` для повторного воспроизведения эффекта не забудьте заново установить `timePerChar`.
 
-To control the typing effect, call `skip` to show the entire text at once, and `resetAnimation` to
-reset the typing effect back to the beginning without having to recreate the component. Do note
-that `skip` sets `boxConfig.timePerChar` to `0` so when attempting to replay the typing effect
-after calling `skip`, make sure to re-set the `boxConfig.timePerChar` right before or after
-calling `resetAnimation`.
-
-Example usage:
+Пример использования:
 
 ```dart
 class MyTextBox extends TextBoxComponent {
@@ -118,23 +97,14 @@ class MyTextBox extends TextBoxComponent {
 }
 ```
 
-
-You can find all the options under [TextBoxComponent's
-API](https://pub.dev/documentation/flame/latest/components/TextBoxComponent-class.html).
+Подробнее см. в [API TextBoxComponent](https://pub.dev/documentation/flame/latest/components/TextBoxComponent-class.html).
 
 
 ### ScrollTextBoxComponent
 
-The `ScrollTextBoxComponent` is an advanced version of the `TextBoxComponent`,
-designed for displaying scrollable text within a defined area.
-This component is particularly useful for creating interfaces where large amounts of text
-need to be presented in a constrained space, such as dialogues or information panels.
+`ScrollTextBoxComponent` — это продвинутая версия `TextBoxComponent`, добавляющая вертикальную прокрутку, когда текст превышает размеры рамки. Полезна для диалогов, информационных панелей и т.п. Свойство `align` здесь не поддерживается.
 
-Note that the `align` property of `TextBoxComponent` is not available.
-
-
-Example usage:
-
+Пример:
 
 ```dart
 class MyScrollableText extends ScrollTextBoxComponent {
@@ -150,11 +120,9 @@ class MyScrollableText extends ScrollTextBoxComponent {
 
 ### TextElementComponent
 
-If you want to render an arbitrary TextElement, ranging from a single InlineTextElement to a
-formatted DocumentRoot, you can use the `TextElementComponent`.
+Для рендеринга произвольного `TextElement` (от простого `InlineTextElement` до форматированного `DocumentRoot`) используйте `TextElementComponent`.
 
-A simple example is to create a DocumentRoot to render a sequence of block elements (think of an
-HTML "div") containing rich text:
+Простой пример с `DocumentRoot`, содержащим блоки (аналог HTML-блоков) и форматированным текстом:
 
 ```dart
   final document = DocumentRoot([
@@ -171,13 +139,9 @@ HTML "div") containing rich text:
   );
 ```
 
-Note that the size can be specified in two ways; either via:
+Размер можно задать либо через `size` (как у любого `PositionComponent`), либо через `DocumentStyle`.
 
-- the size property common to all `PositionComponents`; or
-- the width/height included within the `DocumentStyle` applied.
-
-An example applying a style to the document (which can include the size but other parameters as
-well):
+Пример со стилем:
 
 ```dart
   final style = DocumentStyle(
@@ -198,21 +162,16 @@ well):
   );
 ```
 
-See a more elaborate [example of rich-text, formatted
-text blocks rendering](https://github.com/flame-engine/flame/blob/main/examples/lib/stories/rendering/rich_text_example.dart).
+Более подробный пример форматированного текста: [rich text example](https://github.com/flame-engine/flame/blob/main/examples/lib/stories/rendering/rich_text_example.dart).
 
-For more details about the underlying mechanics of the text rendering pipeline, see "Text Elements,
-Text Nodes, and Text Styles" below.
+О внутреннем устройстве текстового движка см. раздел «Text Elements, Text Nodes и Text Styles» ниже.
 
 
 ### Flame Markdown
 
-In order to more easily create rich-text-based DocumentRoots, from simple strings with bold/italics
-to complete structured documents, Flame provides the `flame_markdown` bridge package that connects
-the `markdown` library with Flame's text rendering infrastructure.
+Для упрощённого создания `DocumentRoot` из строк с разметкой (жирный, курсив и т.д.) Flame предоставляет пакет `flame_markdown`, связывающий библиотеку `markdown` с инфраструктурой рендеринга текста.
 
-Just use the `FlameMarkdown` helper class and the `toDocument` method to convert a markdown string
-into a DocumentRoot (which can then be used to create a `TextElementComponent`):
+Используйте `FlameMarkdown` и метод `toDocument`:
 
 ```dart
 import 'package:flame/text.dart';
@@ -234,26 +193,22 @@ final component = await TextElementComponent.fromDocument(
 ```
 
 
-## Infrastructure
+## Инфраструктура
 
-If you are not using the Flame Component System, want to understand the infrastructure behind text
-rendering, want to customize fonts and styles used, or want to create your own custom renderers,
-this section is for you.
+Если вы не используете систему компонентов Flame, хотите понять внутреннее устройство, настроить шрифты и стили или создать собственные рендереры, читайте этот раздел.
 
-- `TextRenderer`: renderers know "how" to render text; in essence they contain the style information
-  to render any string
-- `TextElement`: an element is formatted, "laid-out" piece of text, include the string ("what") and
-  the style ("how")
+- `TextRenderer`: знает, «как» отображать текст; по сути содержит информацию о стиле.
+- `TextElement`: отформатированный, сверстанный фрагмент текста, включающий строку («что») и стиль («как»).
 
-The following diagram showcases the class and inheritance structure of the text rendering pipeline:
+Диаграмма классов:
 
 ```{mermaid}
 %%{init: { 'theme': 'dark' } }%%
 classDiagram
     %% renderers
-    note for TextRenderer "This just the style (how).
-    It knows how to take a text string and create a TextElement.
-    `render` is just a helper to `format(text).render(...)`. Same for `getLineMetrics`."
+    note for TextRenderer "Это только стиль (как).
+    Он знает, как взять строку и создать TextElement.
+    `render` — это просто хелпер для `format(text).render(...)`. То же для `getLineMetrics`."
     class TextRenderer {
         TextElement format(String text)
         LineMetrics getLineMetrics(String text)
@@ -278,8 +233,8 @@ classDiagram
     TextPaint *-- TextPainterTextElement
     SpriteFontRenderer *-- SpriteFontTextElement
 
-    note for TextElement "This is the text (what) and the style (how);
-    laid out and ready to render."
+    note for TextElement "Это текст (что) и стиль (как);
+    сверстан и готов к рендерингу."
     TextElement --> TextPainterTextElement
     TextElement --> SpriteFontTextElement
     TextElement --> Others
@@ -288,28 +243,24 @@ classDiagram
 
 ### TextRenderer
 
-`TextRenderer` is the abstract class used by Flame to render text. Implementations of `TextRenderer`
-must include the information about the "how" the text is rendered. Font style, size, color, etc. It
-should be able to combine that information with a given string of text, via the `format` method, to
-generate a `TextElement`.
+`TextRenderer` — абстрактный класс для рендеринга текста. Реализации должны содержать информацию о том, «как» отображать текст (шрифт, размер, цвет и т.д.) и уметь объединять её со строкой через метод `format`, возвращая `TextElement`.
 
-Flame provides two concrete implementations:
+Две конкретные реализации:
 
-- `TextPaint`: most used, uses Flutter `TextPainter` to render regular text
-- `SpriteFontRenderer`: uses a `SpriteFont` (a sprite sheet-based font) to render bitmap text
-- `DebugTextRenderer`: only intended to be used for Golden Tests
+- `TextPaint`: наиболее часто используется, на базе Flutter `TextPainter`
+- `SpriteFontRenderer`: использует `SpriteFont` (растровый шрифт на основе спрайт-листа)
+- `DebugTextRenderer`: только для Golden-тестов
 
-But you can also provide your own if you want to extend to other customized forms of text rendering.
+Можно создать свою реализацию.
 
-The main job of a `TextRenderer` is to format a string of text into a `TextElement`, that then can
-be rendered onto the screen:
+Основная задача `TextRenderer` — форматировать строку в `TextElement`, который затем можно отрисовать:
 
 ```dart
 final textElement = textRenderer.format("Flame is awesome")
 textElement.render(...) 
 ```
 
-However the renderer provides a helper method to directly create the element and render it:
+Также есть хелпер для прямого рендеринга:
 
 ```dart
 textRenderer.render(
@@ -323,15 +274,9 @@ textRenderer.render(
 
 #### TextPaint
 
-`TextPaint` is the built-in implementation of text rendering in Flame. It is based on top of
-Flutter's `TextPainter` class (hence the name), and it can be configured by the style class
-`TextStyle`, which contains all typographical information required to render text; i.e., font size
-and color, font family, etc.
+`TextPaint` — встроенная реализация, использующая `TextPainter` Flutter. Настраивается через `TextStyle` (размер, цвет, шрифт и т.д.).
 
-Outside of the style you can also optionally provide one extra parameter which is the
-`textDirection` (but that is typically already set to `ltr` or left-to-right).
-
-Example usage:
+Пример:
 
 ```dart
 const TextPaint textPaint = TextPaint(
@@ -342,66 +287,40 @@ const TextPaint textPaint = TextPaint(
 );
 ```
 
-Note: there are several packages that contain the class `TextStyle`. We export the right one (from
-Flutter) via the `text` module:
+Важно импортировать правильный `TextStyle` из `package:flutter/painting.dart`, при необходимости скрывая версию из `dart:ui`.
 
-```dart
-import 'package:flame/text.dart';
-```
+Основные свойства `TextStyle`:
 
-But if you want to import it explicitly, make sure that you import it from
-`package:flutter/painting.dart` (or from material or widgets). If you also need to import `dart:ui`,
-you might need to hide its version of `TextStyle`, since that module contains a different class with
-the same name:
+- `fontFamily`: название шрифта (например, Arial, или пользовательский)
+- `fontSize`: размер в пунктах (по умолчанию 24.0)
+- `height`: высота строки как множитель размера шрифта
+- `color`: цвет как `ui.Color`
 
-```dart
-import 'package:flutter/painting.dart';
-import 'dart:ui' hide TextStyle;
-```
-
-Following are some common properties of `TextStyle`(see the [full
-list of `TextStyle` properties](https://api.flutter.dev/flutter/painting/TextStyle-class.html)):
-
-- `fontFamily`: a commonly available font, like Arial (default), or a custom font added in your
- pubspec (see [how to add a custom font](https://docs.flutter.dev/cookbook/design/fonts)).
-- `fontSize`: font size, in pts (default `24.0`).
-- `height`: height of text line, as a multiple of font size (default `null`).
-- `color`: the color, as a `ui.Color` (default white).
-
-For more information regarding colors and how to create them, see the [Colors and
-Palette](palette.md) guide.
+Подробнее о цветах см. [Colors и Palette](palette.md).
 
 
 #### SpriteFontRenderer
 
-The other renderer option provided out of the box is `SpriteFontRenderer`, which allows you to
-provide a `SpriteFont` based off of a sprite sheet. TODO
+Позволяет использовать `SpriteFont` на основе спрайт-листа. Документация в процессе подготовки (TODO).
 
 
 #### DebugTextRenderer
 
-This renderer is intended to be used for Golden Tests. Rendering normal font-based text in Golden
-Tests is unreliable due to differences in font definitions across platforms and different algorithms
-used for anti-aliasing. This renderer will render text as if each word was a solid rectangle, making
-it possible to test the layout, positioning and sizing of the elements without having to rely on
-font-based rendering.
+Предназначен для Golden-тестов: рендерит текст в виде сплошных прямоугольников (каждое слово — прямоугольник), чтобы избежать проблем с платформенно-зависимым сглаживанием шрифтов и проверять вёрстку, позиционирование и размеры.
 
 
 ## Inline Text Elements
 
-A `TextElement` is a "pre-compiled", formatted and laid-out piece of text with a specific styling
-applied, ready to be rendered at any given position.
+`TextElement` — «скомпилированный», сверстанный фрагмент текста с определённым стилем, готовый к рендерингу.
 
-A `InlineTextElement` implements the `TextElement` interface and must implement their two methods,
-one that teaches how to translate it around and another on how to draw it to the canvas:
+`InlineTextElement` реализует интерфейс `TextElement` с двумя методами:
 
 ```dart
   void translate(double dx, double dy);
   void draw(Canvas canvas);
 ```
 
-These methods are intended to be overwritten by the implementations of `InlineTextElement`, and
-probably will not be called directly by users; because a convenient `render` method is provided:
+Они, как правило, не вызываются напрямую; вместо этого используется удобный метод `render`:
 
 ```dart
   void render(
@@ -411,63 +330,31 @@ probably will not be called directly by users; because a convenient `render` met
   })
 ```
 
-That allows the element to be rendered at a specific position, using a given anchor.
-
-The interface also mandates (and provides) a getter for the `LineMetrics` object associated with
-that `InlineTextElement`, which allows you (and the `render` implementation) to access sizing
-information related to the element (width, height, ascend, etc).
-
-```dart
-  LineMetrics get metrics;
-```
+Интерфейс также предоставляет `LineMetrics` через геттер `metrics`, содержащий информацию о размерах (ширина, высота, верхний вынос и т.д.).
 
 
-## Text Elements, Text Nodes, and Text Styles
+## Text Elements, Text Nodes и Text Styles
 
-While normal renderers always work with a `InlineTextElement` directly, there is a bigger underlying
-infrastructure that can be used to render more rich or formatter text.
+Хотя обычные рендереры работают напрямую с `InlineTextElement`, существует более обширная инфраструктура для форматированного (rich) текста.
 
-Text Elements are a superset of Inline Text Elements that represent an arbitrary rendering block
-within a rich-text document. Essentially, they are concrete and "physical": they are objects that
-are ready to be rendered on a canvas.
+Text Elements — это надмножество Inline Text Elements, представляющее произвольный блок в документе; это конкретные объекты, готовые к рендерингу.
 
-This property distinguishes them from Text Nodes, which are structured pieces of text, and from Text
-Styles (called `FlameTextStyle` in code to make it easier to work alongside Flutter's `TextStyle`),
-which are descriptors for how arbitrary pieces of text ought to be rendered.
+Они отличаются от Text Nodes (структурированные части текста) и FlameTextStyle (описания того, как должен отображаться текст).
 
-So, in the most general case, a user would use a `TextNode` to describe a desired piece of rich
-text; define a `FlameTextStyle` to apply to it; and use that to generate a `TextElement`. Depending
-on the type of rendering, the `TextElement` generated will be an `InlineTextElement`, which brings
-us back to the normal flow of the rendering pipeline. The unique property of the Inline-Text-type
-element is that it exposes a LineMetrics that can be used for advanced rendering; while the other
-elements only expose a simpler `draw` method which is unaware of sizing and positioning.
+В общем случае пользователь создаёт `TextNode` для описания rich-текста, определяет `FlameTextStyle` и генерирует `TextElement`. Для рендеринга произвольного TextElement можно использовать `TextElementComponent`.
 
-However, the other types of Text Elements, Text Nodes, and Text Styles must be used if the intent is
-to create an entire document (multiple blocks or paragraphs), enriched with formatted text. In order
-to render an arbitrary TextElement, you can alternatively use the `TextElementComponent` (see above).
-
-See [examples of such usage](https://github.com/flame-engine/flame/blob/main/examples/lib/stories/rendering/rich_text_example.dart).
+Примеры: [rich text example](https://github.com/flame-engine/flame/blob/main/examples/lib/stories/rendering/rich_text_example.dart).
 
 
-### Text Nodes and the Document Root
+### Text Nodes и Document Root
 
-A `DocumentRoot` is not a `TextNode` (inheritance-wise) in itself but represents a grouping of
-`BlockNodes` that layout a "page" or "document" of rich text laid out in multiple blocks or
-paragraphs. It represents the entire document and can receive a global Style.
+`DocumentRoot` не наследуется от `TextNode`, но представляет группу `BlockNode`, формирующих «страницу» или «документ» из нескольких блоков/абзацев. Он может получать глобальный стиль.
 
-The first step to define your rich-text document is to create a Node, which will likely be a
-`DocumentRoot`.
+Сначала создаётся узел — обычно `DocumentRoot`, содержащий блочные узлы верхнего уровня: заголовки, параграфы или колонки. Каждый блок может содержать другие блоки или Inline Text Nodes (простой текст или форматированные фрагменты).
 
-It will first contain the top-most list of Block Nodes that can define headers, paragraphs or
-columns.
+Иерархия узлов используется и для применения стилей (каскадирование).
 
-Then each of those blocks can contain other blocks or the Inline Text Nodes, either Plain Text Nodes
-or some rich-text with specific formatting.
-
-Note that the hierarchy defined by the node structure is also used for styling purposes as per
-defined in the `FlameTextStyle` class.
-
-The actual nodes all inherit from `TextNode` and are broken down by the following diagram:
+Диаграмма узлов:
 
 ```{mermaid}
 %%{init: { 'theme': 'dark' } }%%
@@ -478,8 +365,8 @@ graph TD
     %% Nodes %%
     TextNode("
         <big><strong>TextNode</strong></big>
-        Can be thought of as an HTML DOM node;
-        each subclass can be thought of as a specific tag.
+        Можно представить как узел HTML DOM;
+        каждый подкласс — как определённый тег.
     ")
     BlockNode("
         <big><strong>BlockNode</strong></big>
@@ -491,15 +378,15 @@ graph TD
     ")
     ColumnNode("
         <big><strong>ColumnNode</strong></big>
-        column-arranged group of other Block Nodes
+        группа BlockNode, расположенных в столбец
     ")
     TextBlockNode("
         <big><strong>TextBlockNode</strong></big>
-        a #quot;div#quot; with an InlineTextNode as a direct child
+        #quot;div#quot; с InlineTextNode как прямым потомком
     ")
     HeaderNode("
         <big><strong>HeaderNode</strong></big>
-        #quot;h1#quot; / #quot;h2#quot; / etc
+        #quot;h1#quot; / #quot;h2#quot; / и т.д.
     ")
     ParagraphNode("
         <big><strong>ParagraphNode</strong></big>
@@ -507,11 +394,11 @@ graph TD
     ")
     GroupTextNode("
         <big><strong>GroupTextNode</strong></big>
-        groups other TextNodes in a single line
+        группирует другие TextNode в одной строке
     ")
     PlainTextNode("
         <big><strong>PlainTextNode</strong></big>
-        just plain text, unformatted
+        простой текст без форматирования
     ")
     ItalicTextNode("
         <big><strong>ItalicTextNode</strong></big>
@@ -536,14 +423,11 @@ graph TD
 
 ### (Flame) Text Styles
 
-Text Styles can be applied to nodes to generate elements. They all inherit from `FlameTextStyle`
-abstract class (which is named as is to avoid confusion with Flutter's `TextStyle`).
+Стили применяются к узлам для генерации элементов. Все наследуются от абстрактного `FlameTextStyle` (назван так, чтобы избежать путаницы с Flutter `TextStyle`).
 
-They follow a tree-like structure, always having `DocumentStyle` as the root; this structure is
-leveraged to apply cascading style to the analogous Node structure. In fact, they are pretty similar
-to, and can be thought of as, CSS definitions.
+Они образуют древовидную структуру, где корнем выступает `DocumentStyle`; каскадирование стилей аналогично CSS.
 
-The full inheritance chain can be seen on the following diagram:
+Иерархия стилей:
 
 ```{mermaid}
 %%{init: { 'theme': 'dark' } }%%
@@ -554,32 +438,32 @@ classDiagram
         merge()
     }
 
-    note for FlameTextStyle "Root for all styles.
-    Not to be confused with Flutter's TextStyle."
+    note for FlameTextStyle "Корень всех стилей.
+    Не путать с TextStyle из Flutter."
 
     class DocumentStyle {
-        <<for the entire Document Root>>
+        <<для всего Document Root>>
         size
         padding
         background [BackgroundStyle]
-        specific styles [for blocks & inline]
+        специфичные стили [для блоков и inline]
     }
 
     class BlockStyle {
-        <<for Block Nodes>>
+        <<для Block Nodes>>
         margin, padding
         background [BackgroundStyle]
         text [InlineTextStyle]
     }
 
     class BackgroundStyle {
-        <<for Block or Document>>
+        <<для Block или Document>>
         color
         border
     }
 
     class InlineTextStyle {
-        <<for any nodes>>
+        <<для любых узлов>>
         font, color
     }
 
@@ -592,32 +476,17 @@ classDiagram
 
 ### Text Elements
 
-Finally, we have the elements, that represent a combination of a node ("what") with a style ("how"),
-and therefore represent a pre-compiled, laid-out piece of rich text to be rendered on the Canvas.
+Наконец, элементы представляют комбинацию узла («что») и стиля («как») — готовый к рендерингу сверстанный фрагмент текста.
 
-Inline Text Elements specifically can alternatively be thought of as a combination of a
-`TextRenderer` (simplified "how") and a string (single line of "what").
+`InlineTextElement` можно также рассматривать как комбинацию `TextRenderer` (упрощённое «как») и строки (одна строка «что»), поскольку `InlineTextStyle` может быть преобразован в конкретный `TextRenderer` через метод `asTextRenderer`, который затем используется для вёрстки каждой строки в `InlineTextElement`.
 
-That is because an `InlineTextStyle` can be converted to a specific `TextRenderer` via the
-`asTextRenderer` method, which is then used to lay out each line of text into a unique
-`InlineTextElement`.
+При прямом использовании рендерера возвращается `TextPainterTextElement` или `SpriteFontTextElement`.
 
-When using the renderer directly, the entire layout process is skipped, and a single
-`TextPainterTextElement` or `SpriteFontTextElement` is returned.
+Рекомендации по выбору подхода:
 
-As you can see, both definitions of an Element are, essentially, equivalent, all things considered.
-But it still leaves us with two paths for rendering text. Which one to pick? How to solve this
-conundrum?
-
-When in doubt, the following guidelines can help you picking the best path for you:
-
-- for the simplest way to render text, use `TextPaint` (basic renderer implementation)
-  - you can use the FCS provided component `TextComponent` for that.
-- for rendering Sprite Fonts, you must use `SpriteFontRenderer` (a renderer implementation that
-  accepts a `SpriteFont`);
-- for rendering multiple lines of text, with automatic line breaks, you have two options:
-  - use the FCS `TextBoxComponent`, which uses any text renderer to draw each line of text as an
-    Element, and does its own layout and line breaking;
-  - use the Text Node & Style system to create your pre-laid-out Elements. Note: there is no current
-    FCS component for it.
-- finally, in order to have formatted (or rich) text, you must use Text Nodes & Styles.
+- Самый простой способ: `TextPaint` (базовый рендерер). Для него есть готовый компонент `TextComponent`.
+- Для растровых шрифтов: `SpriteFontRenderer`.
+- Для многострочного текста с автоматическим переносом:
+  - `TextBoxComponent` (использует любой рендерер, делает свою вёрстку).
+  - Система узлов и стилей для предварительной вёрстки (нет готового FCS-компонента).
+- Для форматированного (rich) текста: обязательно использовать Text Nodes и Styles.
