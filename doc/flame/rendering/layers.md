@@ -1,43 +1,36 @@
-# Layers and Snapshots
+# Слои и снимки (Layers and Snapshots)
 
-Layers and snapshots share some common features, including the ability to pre-render and cache
-objects for improved performance. However, they also have unique features which make them better
-suited for different use-cases.
+Слои и снимки имеют общие черты, включая возможность предварительного рендеринга и кэширования объектов для повышения производительности. Однако у них есть и уникальные особенности, делающие их более подходящими для разных сценариев использования.
 
-`Snapshot` is a mixin that can be added to any `PositionComponent`. Use this for:
+`Snapshot` — это примесь, которую можно добавить к любому `PositionComponent`. Используйте её для:
 
-- Mixing in to existing game objects (that are `PositionComponents`).
-- Caching game objects, such as sprites, that are complex to render.
-- Drawing the same object many times without rendering it each time.
-- Capturing an image snapshot to save as a screenshot (for example).
+- Подмешивания к существующим игровым объектам (являющимся `PositionComponents`).
+- Кэширования игровых объектов, таких как спрайты, которые сложно рендерить.
+- Многократного рисования одного и того же объекта без его повторного рендеринга каждый раз.
+- Захвата снимка изображения для сохранения в качестве скриншота (например).
 
-`Layer` is a class. Use or extend this class for:
+`Layer` — это класс. Используйте или расширяйте этот класс для:
 
-- Structuring your game with logical layers (e.g. UI, foreground, main, background).
-- Grouping objects to form a complex scene, and then caching it (e.g. a background layer).
-- Processor support. Layers allow user-defined processors to run pre- and post- render.
+- Структурирования игры с помощью логических слоёв (например, UI, передний план, основной, фон).
+- Группировки объектов для формирования сложной сцены с последующим кэшированием (например, фоновый слой).
+- Поддержки процессоров. Слои позволяют запускать определённые пользователем процессоры до и после рендеринга.
 
 
-## Layers
+## Слои (Layers)
 
-Layers allow you to group rendering by context, as well as allow you to pre-render things. This
-enables, for example, rendering parts of your game that don't change much in memory, like a
-background. By doing this, you'll free processing power for more dynamic content that needs to be
-rendered every game tick.
+Слои позволяют группировать рендеринг по контексту, а также предварительно рендерить объекты. Это даёт возможность, например, рендерить части игры, которые мало меняются, в памяти, как фон. Тем самым вы освобождаете вычислительные ресурсы для более динамичного контента, который нужно рендерить каждый игровой тик.
 
-There are two types of layers on Flame:
+В Flame есть два типа слоёв:
 
-- `DynamicLayer`: For things that are moving or changing.
-- `PreRenderedLayer`: For things that are static.
+- `DynamicLayer`: Для объектов, которые двигаются или изменяются.
+- `PreRenderedLayer`: Для статичных объектов.
 
 
 ### DynamicLayer
 
-Dynamic layers are layers that are rendered every time that they are drawn on the canvas. As the
-name suggests, it is meant for dynamic content and is most useful for grouping rendering of objects
-that have the same context.
+Динамические слои рендерятся каждый раз при отрисовке на холсте. Как следует из названия, они предназначены для динамического содержимого и наиболее полезны для группировки рендеринга объектов с одинаковым контекстом.
 
-Usage example:
+Пример использования:
 
 ```dart
 class GameLayer extends DynamicLayer {
@@ -59,11 +52,11 @@ class GameLayer extends DynamicLayer {
 }
 
 class MyGame extends Game {
-  // Other methods omitted...
+  // Другие методы опущены...
 
   @override
   void render(Canvas canvas) {
-    gameLayer.render(canvas); // x and y can be provided as optional position arguments
+    gameLayer.render(canvas); // x и y могут быть переданы как опциональные аргументы позиции
   }
 }
 ```
@@ -71,11 +64,9 @@ class MyGame extends Game {
 
 ### PreRenderedLayer
 
-Pre-rendered layers are rendered only once, cached in memory and then just
-replicated on the game canvas afterwards. They are useful for caching content that doesn't change
-during the game, like a background for example.
+Предварительно отрендеренные слои рендерятся только один раз, кэшируются в памяти, а затем просто копируются на игровой холст. Они полезны для кэширования контента, который не меняется в течение игры, например, фона.
 
-Usage example:
+Пример использования:
 
 ```dart
 class BackgroundLayer extends PreRenderedLayer {
@@ -93,28 +84,25 @@ class BackgroundLayer extends PreRenderedLayer {
 }
 
 class MyGame extends Game {
-  // Other methods omitted...
+  // Другие методы опущены...
 
   @override
   void render(Canvas canvas) {
-    // x and y can be provided as optional position arguments.
+    // x и y могут быть переданы как опциональные аргументы позиции.
     backgroundLayer.render(canvas);
   }
 }
 ```
 
 
-### Layer Processors
+### Процессоры слоёв (Layer Processors)
 
-Flame also provides a way to add processors on your layer, which are ways to add effects on the
-entire layer. At the moment, out of the box, only the `ShadowProcessor` is available, this processor
-renders a back drop shadow on your layer.
+Flame также предоставляет возможность добавлять процессоры к вашему слою — это способы наложения эффектов на весь слой. На данный момент «из коробки» доступен только `ShadowProcessor`, который рендерит тень позади вашего слоя.
 
-To add processors to your layer, just add them to the layer `preProcessors` or `postProcessors`
-list, like so:
+Чтобы добавить процессоры к слою, просто добавьте их в список `preProcessors` или `postProcessors` слоя, например:
 
 ```dart
-// Works the same for both DynamicLayer and PreRenderedLayer
+// Работает одинаково и для DynamicLayer, и для PreRenderedLayer
 class BackgroundLayer extends PreRenderedLayer {
   final Sprite sprite;
 
@@ -123,19 +111,19 @@ class BackgroundLayer extends PreRenderedLayer {
   }
 
   @override
-  void drawLayer() { /* omitted */ }
+  void drawLayer() { /* опущено */ }
 
   // ...
 ```
 
-Custom processors can be created by extending the `LayerProcessor` class.
+Пользовательские процессоры можно создавать, расширяя класс `LayerProcessor`.
 
-See [a working example of layers](https://github.com/flame-engine/flame/blob/main/examples/lib/stories/rendering/layers_example.dart).
+Смотрите [рабочий пример слоёв](https://github.com/flame-engine/flame/blob/main/examples/lib/stories/rendering/layers_example.dart).
 
 
-## Snapshots
+## Снимки (Snapshots)
 
-Snapshots are an alternative to layers. The `Snapshot` mixin can be applied to any `PositionComponent`.
+Снимки — это альтернатива слоям. Примесь `Snapshot` может быть применена к любому `PositionComponent`.
 
 ```dart
 class SnapshotComponent extends PositionComponent with Snapshot {}
@@ -145,7 +133,7 @@ class MyGame extends FlameGame {
 
   @override
   Future<void> onLoad() async {
-    // Add a snapshot component.
+    // Добавляем компонент-снимок.
     root = SnapshotComponent();
     add(root);
   }
@@ -153,12 +141,9 @@ class MyGame extends FlameGame {
 ```
 
 
-### Render as a snapshot
+### Рендеринг как снимок
 
-Setting `renderSnapshot` to `true` (the default) on a snapshot-enabled component behaves similarly
-to a `PreRenderedLayer`. The component is rendered only once, cached in memory and then just
-replicated on the game canvas afterwards. This is useful for caching content that doesn't change
-during the game, like a background.
+Установка `renderSnapshot` в `true` (по умолчанию) для компонента со снимком ведёт себя подобно `PreRenderedLayer`. Компонент рендерится только один раз, кэшируется в памяти и затем просто копируется на игровой холст. Это полезно для кэширования контента, который не меняется в течение игры, например фона.
 
 ```dart
 class SnapshotComponent extends PositionComponent with Snapshot {}
@@ -170,11 +155,11 @@ class MyGame extends FlameGame {
 
   @override
   Future<void> onLoad() async {
-    // Add a snapshot component.
+    // Добавляем компонент-снимок.
     root = SnapshotComponent();
     add(root);
 
-    // Add some children.
+    // Добавляем дочерние элементы.
     final background1Sprite = Sprite(await images.load('background1.png'));
     background1 = SpriteComponent(sprite: background1Sprite);
     root.add(background1);
@@ -183,38 +168,29 @@ class MyGame extends FlameGame {
     background2 = SpriteComponent(sprite: background2Sprite);
     root.add(background2);
 
-    // root will now render once (itself and all its children) and then cache
-    // the result. On subsequent render calls, root itself, nor any of its
-    // children, will be rendered. The snapshot will be used instead for
-    // improved performance.
+    // Теперь root будет отрендерен один раз (сам и все его потомки), а затем
+    // результат закэширован. При последующих вызовах рендеринга ни сам root,
+    // ни его дочерние элементы не будут рендериться. Вместо этого будет
+    // использоваться снимок для повышения производительности.
   }
 }
 ```
 
 
-#### Regenerating a snapshot
+#### Перегенерация снимка
 
-A snapshot-enabled component will generate a snapshot of its entire tree, including its children.
-If any of the children change (for example, their position changes, or they are animated), call
-`takeSnapshot` to update the cached snapshot. If they are changing very frequently, it's best not
-to use a `Snapshot` because there will be no performance benefit.
+Компонент со снимком создаёт снимок всего своего дерева, включая потомков. Если какой-либо из потомков изменяется (например, меняется позиция или воспроизводится анимация), вызовите `takeSnapshot`, чтобы обновить кэшированный снимок. Если они меняются очень часто, лучше не использовать `Snapshot`, так как выигрыша в производительности не будет.
 
-A component rendering a snapshot can still be transformed without incurring any performance cost.
-Once a snapshot has been taken, the component may still be scaled, moved and rotated. However, if
-the content of the component changes (what it is rendering) then the snapshot must be regenerated
-by calling `takeSnapshot`.
+Компонент, рендерящий снимок, всё ещё может быть трансформирован без потери производительности. После создания снимка компонент можно масштабировать, перемещать и вращать. Однако, если содержимое компонента меняется (то, что он рендерит), снимок нужно перегенерировать вызовом `takeSnapshot`.
 
 
-### Taking a snapshot
+### Создание снимка
 
-A snapshot-enabled component can be used to generate a snapshot at any time, even if
-`renderSnapshot` is set to false. This is useful for taking screen-grabs or any other purpose when
-it may be useful to have a static snapshot of all or part of your game.
+Компонент со снимком можно использовать для генерации снимка в любое время, даже если `renderSnapshot` установлен в false. Это полезно для создания скриншотов или любых других целей, когда нужен статичный снимок всей или части игры.
 
-A snapshot is always generated with no transform applied - i.e. as if the snapshot-enabled
-component is at position (0,0) and has no scale or rotation applied.
+Снимок всегда создаётся без применения трансформаций — т.е. как если бы компонент находился в позиции (0,0) без масштабирования и поворота.
 
-A snapshot is saved as a `Picture`, but it can be converted to an `Image` using `snapshotToImage`.
+Снимок сохраняется как `Picture`, но его можно преобразовать в `Image` с помощью `snapshotToImage`.
 
 ```dart
 class SnapshotComponent extends PositionComponent with Snapshot {}
@@ -224,14 +200,14 @@ class MyGame extends FlameGame {
 
   @override
   Future<void> onLoad() async {
-    // Add a snapshot component, but don't use its render mode.
+    // Добавляем компонент-снимок, но не используем его режим рендеринга снимка.
     root = SnapshotComponent()..renderSnapshot = false;
     add(root);
 
-    // Other code omitted.
+    // Остальной код опущен.
   }
 
-  // Call something like this to take an image snapshot at any time.
+  // Вызовите что-то подобное, чтобы получить снимок изображения в любое время.
   void takeSnapshot() {
     root.takeSnapshot();
     final image = root.snapshotToImage(200, 200);
@@ -240,26 +216,21 @@ class MyGame extends FlameGame {
 ```
 
 
-### Snapshots that are cropped or off-center
+### Снимки, которые обрезаны или смещены
 
-Sometimes your snapshot `Image` may appear cropped, or not in the position you expected.
+Иногда ваше изображение-снимок может оказаться обрезанным или не в той позиции, которую вы ожидаете.
 
-This is because the contents of a `Picture` can be positioned anywhere with respect to the origin,
-but when it is converted to an `Image`, the image always starts from `0,0`. This means that
-anything with a -ve position will be cropped.
+Это происходит потому, что содержимое `Picture` может быть расположено где угодно относительно начала координат, но при преобразовании в `Image` изображение всегда начинается с `0,0`. Это означает, что всё, что имеет отрицательную позицию, будет обрезано.
 
-The best way to deal with this is to ensure that your `Snapshot` component is always at position
-`0,0` with respect to your game and you never move it. This means that the image will usually
-contain what you expect it to.
+Лучший способ справиться с этим — убедиться, что ваш компонент `Snapshot` всегда находится в позиции `0,0` относительно игры и вы никогда его не перемещаете. Это гарантирует, что изображение обычно будет содержать то, что вы ожидаете.
 
-However, this is not always possible. To move (or rotate, or scale etc) the snapshot before
-converting it to an image, pass a transformation matrix to `snapshotToImage` like so:
+Однако это не всегда возможно. Чтобы переместить (или повернуть, масштабировать и т.д.) снимок перед преобразованием в изображение, передайте матрицу трансформации в `snapshotToImage` следующим образом:
 
 ```dart
-// Call something like this to take an image snapshot at any time.
+// Вызовите что-то подобное, чтобы получить снимок изображения в любое время.
 void takeSnapshot() {
-  // Prepare a matrix to move the snapshot by 200,50.
-  final matrix = Matrix4.identity()..translate(200.0,50.0);
+  // Подготавливаем матрицу для перемещения снимка на (200, 50).
+  final matrix = Matrix4.identity()..translate(200.0, 50.0);
 
   root.takeSnapshot();
   final image = root.snapshotToImage(200, 200, transform: matrix);
