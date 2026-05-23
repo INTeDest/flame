@@ -1,9 +1,8 @@
-# Combined Effect
+# Комбинированный эффект
 
-This effect can be used to run multiple other effects simultaneously.
+Этот эффект можно использовать для одновременного запуска нескольких других эффектов.
 
-The combined effect can also be alternating (the sequence will first run forward, and then
-backward); and also repeat a certain predetermined number of times, or infinitely.
+Комбинированный эффект также может быть попеременным (последовательность сначала будет выполняться вперёд, а затем назад), а также повторяться заданное количество раз или бесконечно.
 
 ```{flutter-app}
 :sources: ../flame/examples
