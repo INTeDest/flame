@@ -1,40 +1,23 @@
-
 ```{flutter-app}
 :sources: ../flame/examples
 :page: router
 :show: widget code infobox
 
-This example app shows the use of the `RouterComponent` to move across multiple
-screens within the game. In addition, the "pause" button stops time and applies
-visual effects to the content of the page below it.
+Этот пример демонстрирует использование `RouterComponent` для перемещения между несколькими экранами внутри игры. Кроме того, кнопка «пауза» останавливает время и применяет визуальные эффекты к содержимому нижележащей страницы.
 ```
 
 
 # RouterComponent
 
-Most games consist of more than a single screen: there is a main menu, a settings page, the
-gameplay screen, pop-up dialogs, and so on. Managing the transitions between these screens can
-quickly become messy. The `RouterComponent` solves this by providing a stack-based navigation
-model, similar in spirit to Flutter's [Navigator][Flutter Navigator] class, except that it works
-with Flame components instead of Flutter widgets.
+Большинство игр состоит из более чем одного экрана: главное меню, страница настроек, экран игрового процесса, всплывающие диалоги и так далее. Управление переходами между этими экранами может быстро стать беспорядочным. `RouterComponent` решает эту проблему, предоставляя модель навигации на основе стека, аналогичную по духу классу [Navigator][Flutter Navigator] во Flutter, но работающую с компонентами Flame вместо виджетов Flutter.
 
-A typical game will usually consist of multiple pages: the splash screen, the starting menu page,
-the settings page, credits, the main game page, several pop-ups, etc. The router will organize
-all these destinations and allow you to transition between them.
+Типичная игра обычно состоит из нескольких страниц: экран-заставка, стартовое меню, настройки, титры, основной игровой экран, различные всплывающие окна и т.д. Маршрутизатор упорядочивает все эти пункты назначения и позволяет переходить между ними.
 
-Internally, the `RouterComponent` contains a stack of routes. When you request it to show a route,
-it will be placed on top of all other pages in the stack. Later you can `pop()` to remove the
-topmost page from the stack. The pages of the router are addressed by their unique names.
+Внутри `RouterComponent` содержит стек маршрутов. Когда вы запрашиваете отображение маршрута, он помещается на вершину стека поверх всех остальных страниц. Позже вы можете вызвать `pop()`, чтобы удалить самую верхнюю страницу из стека. Страницы маршрутизатора идентифицируются по их уникальным именам.
 
-Each page in the router can be either transparent or opaque. If a page is opaque, then the pages
-below it in the stack are not rendered and do not receive pointer events (such as taps or drags).
-On the contrary, if a page is transparent, then the page below it will be rendered and receive
-events normally. Such transparent pages are useful for implementing modal dialogs, inventory or
-dialogue UIs, etc. If you want your route to be visually transparent but for the routes below it
-to not receive events, make sure to add a background component to your route that captures the
-events by using one of the [event capturing mixins](inputs/inputs.md).
+Каждая страница в маршрутизаторе может быть прозрачной или непрозрачной. Если страница непрозрачна, то страницы ниже неё в стеке не отображаются и не получают события указателя (такие как касания или перетаскивания). Напротив, если страница прозрачна, то нижележащая страница будет отображаться и получать события обычным образом. Такие прозрачные страницы полезны для реализации модальных диалогов, интерфейсов инвентаря или диалогов и т.д. Если вы хотите, чтобы ваш маршрут был визуально прозрачным, но нижележащие маршруты не получали события, обязательно добавьте в маршрут фоновый компонент, который перехватывает события с помощью одного из [примесей захвата событий](inputs/inputs.md).
 
-Usage example:
+Пример использования:
 
 ```dart
 class MyGame extends FlameGame {
@@ -61,10 +44,9 @@ class PauseRoute extends Route { ... }
 ```
 
 ```{note}
-Use `hide Route` if any of your imported packages export
-another class called `Route`
+Используйте `hide Route`, если какой-либо из импортированных пакетов экспортирует другой класс с именем `Route`.
 
-e.g.: `import 'package:flutter/material.dart' hide Route;`
+Например: `import 'package:flutter/material.dart' hide Route;`
 ```
 
 
@@ -73,38 +55,24 @@ e.g.: `import 'package:flutter/material.dart' hide Route;`
 
 ## Route
 
-The **Route** component holds information about the content of a particular page. `Route`s are
-mounted as children to the `RouterComponent`.
+Компонент **Route** содержит информацию о содержимом конкретной страницы. `Route` монтируются как дочерние элементы `RouterComponent`.
 
-The main property of a `Route` is its `builder`, the function that creates the component with
-the content of its page.
+Основное свойство `Route` — это `builder`, функция, создающая компонент с содержимым страницы.
 
-In addition, the routes can be either transparent or opaque (default). An opaque route prevents
-the route below it from rendering or receiving pointer events, while a transparent route does
-not. As a rule of thumb, declare the route opaque if it is full-screen, and transparent if it
-is supposed to cover only a part of the screen.
+Кроме того, маршруты могут быть прозрачными или непрозрачными (по умолчанию). Непрозрачный маршрут не позволяет нижележащему маршруту отображаться или получать события указателя, в то время как прозрачный маршрут это разрешает. Как правило, объявляйте маршрут непрозрачным, если он полноэкранный, и прозрачным, если он должен покрывать только часть экрана.
 
-By default, routes maintain the state of the page component after being popped from the stack
-and the `builder` function is only called the first time a route is activated. Setting
-`maintainState` to `false` drops the page component after the route is popped from the route stack
-and the `builder` function is called each time the route is activated.
+По умолчанию маршруты сохраняют состояние компонента страницы после извлечения из стека, и функция `builder` вызывается только при первой активации маршрута. Установка `maintainState` в `false` приводит к удалению компонента страницы после извлечения маршрута из стека, и функция `builder` будет вызываться каждый раз при активации маршрута.
 
-The current route can be replaced using `pushReplacementNamed` or `pushReplacement`.  Each method
-simply executes `pop` on the current route and then `pushNamed` or `pushRoute`.
+Текущий маршрут можно заменить с помощью `pushReplacementNamed` или `pushReplacement`. Каждый метод просто выполняет `pop` для текущего маршрута, а затем `pushNamed` или `pushRoute`.
 
 
 ## WorldRoute
 
-The **WorldRoute** is a special route that allows setting active game worlds via the router.
-This type of route can for example be used for swapping levels implemented as separate worlds in
-your game.
+**WorldRoute** — это специальный маршрут, позволяющий задавать активные игровые миры через маршрутизатор. Этот тип маршрута можно, например, использовать для смены уровней, реализованных как отдельные миры в вашей игре.
 
-By default, the `WorldRoute` will replace the current world with the new one and by default it will
-keep the state of the world after being popped from the stack. If you want the world to be recreated
-each time the route is activated, set `maintainState` to `false`.
+По умолчанию `WorldRoute` заменяет текущий мир новым и по умолчанию сохраняет состояние мира после извлечения из стека. Если вы хотите, чтобы мир пересоздавался при каждой активации маршрута, установите `maintainState` в `false`.
 
-If you are not using the built-in `CameraComponent` you can pass in the camera that you want to use
-explicitly in the constructor.
+Если вы не используете встроенный `CameraComponent`, можно явно передать нужную камеру в конструктор.
 
 ```dart
 final router = RouterComponent(
@@ -135,12 +103,9 @@ class MyWorld2 extends World {
 
 ## OverlayRoute
 
-The **OverlayRoute** is a special route that allows adding game overlays via the router. These
-routes are transparent by default.
+**OverlayRoute** — это специальный маршрут, позволяющий добавлять игровые оверлеи через маршрутизатор. По умолчанию эти маршруты прозрачны.
 
-There are two constructors for the `OverlayRoute`. The first constructor requires a builder function
-that describes how the overlay's widget is to be built. The second constructor can be used when the
-builder function was already specified within the `GameWidget`:
+Для `OverlayRoute` существует два конструктора. Первый конструктор требует функцию-строитель, которая описывает, как создавать виджет оверлея. Второй конструктор можно использовать, если функция-строитель уже была указана в `GameWidget`:
 
 ```dart
 final router = RouterComponent(
@@ -157,14 +122,9 @@ final router = RouterComponent(
 );
 ```
 
-Overlays that were defined within the `GameWidget` don't even need to be declared within the routes
-map beforehand: the `RouterComponent.pushOverlay()` method can do it for you. Once an overlay route
-was registered, it can be activated either via the regular `.pushNamed()` method, or via the
-`.pushOverlay()`. The two methods will do exactly the same, though you can use the second one to
-make it more clear in your code that an overlay is being added instead of a regular route.
+Оверлеи, определённые в `GameWidget`, даже не нужно заранее объявлять в карте маршрутов: метод `RouterComponent.pushOverlay()` может сделать это за вас. После регистрации маршрута оверлея его можно активировать либо обычным методом `.pushNamed()`, либо `.pushOverlay()`. Оба метода делают одно и то же, но второй можно использовать, чтобы сделать код более понятным, показывая, что добавляется именно оверлей, а не обычный маршрут.
 
-The current overlay can be replaced using `pushReplacementOverlay`.  This method executes
-`pushReplacementNamed` or `pushReplacement` based on the status of the overlay being pushed.
+Текущий оверлей можно заменить с помощью `pushReplacementOverlay`. Этот метод выполняет `pushReplacementNamed` или `pushReplacement` в зависимости от состояния добавляемого оверлея.
 
 
 ## ValueRoute
@@ -176,15 +136,11 @@ The current overlay can be replaced using `pushReplacementOverlay`.  This method
 :width: 280
 ```
 
-A **ValueRoute** is a route that will return a value when it is eventually popped from the stack.
-Such routes can be used, for example, for dialog boxes that ask for some feedback from the user.
+**ValueRoute** — это маршрут, который возвращает значение, когда он в конечном итоге извлекается из стека. Такие маршруты можно использовать, например, для диалоговых окон, запрашивающих обратную связь от пользователя.
 
-In order to use `ValueRoute`s, two steps are required:
+Для использования `ValueRoute` необходимы два шага:
 
-1. Create a route derived from the `ValueRoute<T>` class, where `T` is the type of the value that
-   your route will return. Inside that class override the `build()` method to construct the
-   component that will be displayed. The component should use the `completeWith(value)` method to
-   pop the route and return the specified value.
+1. Создайте маршрут, производный от класса `ValueRoute<T>`, где `T` — тип значения, которое будет возвращать ваш маршрут. Внутри этого класса переопределите метод `build()` для создания отображаемого компонента. Компонент должен использовать метод `completeWith(value)` для извлечения маршрута и возврата указанного значения.
 
    ```dart
    class YesNoDialog extends ValueRoute<bool> {
@@ -211,16 +167,15 @@ In order to use `ValueRoute`s, two steps are required:
    }
    ```
 
-2. Display the route using `Router.pushAndWait()`, which returns a future that resolves with the
-   value returned from the route.
+2. Отобразите маршрут с помощью `Router.pushAndWait()`, который возвращает future, разрешающийся значением, возвращённым из маршрута.
 
    ```dart
    Future<void> foo() async {
      final result = await game.router.pushAndWait(YesNoDialog('Are you sure?'));
      if (result) {
-       // ... the user is sure
+       // ... пользователь уверен
      } else {
-       // ... the user was not so sure
+       // ... пользователь не был так уверен
      }
    }
    ```
